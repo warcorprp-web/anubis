@@ -88,7 +88,7 @@ export class ProviderPoolManager {
     }
 
     
-    private initializeProviderStatus() {
+    public initializeProviderStatus() {
         for (const providerType in this.providerPools) {
             this.providerStatus[providerType] = [];
             this.roundRobinIndex[providerType] = 0;
