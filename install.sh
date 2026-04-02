@@ -2,21 +2,29 @@
 set -e
 
 echo "========================================"
-echo "  ANUBIS AI Proxy - Installation"
+echo "  ANUBIS AI Proxy - Установка"
 echo "========================================"
 echo ""
 
-# Проверка Docker
+# Проверка и установка Docker
 if ! command -v docker &> /dev/null; then
-    echo "[ERROR] Docker is not installed."
-    echo "        Install Docker: https://docs.docker.com/get-docker/"
-    exit 1
+    echo "[INFO] Docker не установлен. Устанавливаю..."
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sh get-docker.sh
+    rm get-docker.sh
+    systemctl start docker
+    systemctl enable docker
+    echo "[OK] Docker успешно установлен"
+    echo ""
 fi
 
+# Проверка и установка Docker Compose
 if ! command -v docker-compose &> /dev/null; then
-    echo "[ERROR] Docker Compose is not installed."
-    echo "        Install Docker Compose: https://docs.docker.com/compose/install/"
-    exit 1
+    echo "[INFO] Docker Compose не установлен. Устанавливаю..."
+    curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+    echo "[OK] Docker Compose успешно установлен"
+    echo ""
 fi
 
 # Создание .env если не существует
@@ -37,23 +45,23 @@ fi
 mkdir -p data configs
 
 # Сборка и запуск
-echo "[BUILD] Building Docker image..."
+echo "[BUILD] Сборка Docker образа..."
 docker-compose build
 
-echo "[START] Starting container..."
+echo "[START] Запуск контейнера..."
 docker-compose up -d
 
 echo ""
 echo "========================================"
-echo "  ANUBIS AI Proxy is running!"
+echo "  ANUBIS AI Proxy запущен!"
 echo "========================================"
 echo ""
-echo "  Web interface: http://localhost:5000"
-echo "  Default password: 123456"
-echo "  (Change it in Settings panel)"
+echo "  Веб-интерфейс: http://localhost:5000"
+echo "  Пароль по умолчанию: 123456"
+echo "  (Измените в панели Настройки)"
 echo ""
-echo "Management commands:"
-echo "  docker-compose logs -f    # View logs"
-echo "  docker-compose stop       # Stop"
-echo "  docker-compose restart    # Restart"
+echo "Команды управления:"
+echo "  docker-compose logs -f    # Просмотр логов"
+echo "  docker-compose stop       # Остановка"
+echo "  docker-compose restart    # Перезапуск"
 echo "  docker-compose down       # Удаление контейнера"
