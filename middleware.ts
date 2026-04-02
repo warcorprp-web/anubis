@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { isAuthorized } from '@/lib/backend/auth/api-key-auth';
+import { loadConfig } from '@/lib/storage';
 
+export const runtime = 'nodejs';
 
 const REGISTERED_PROVIDERS = [
   'claude-kiro-oauth',
@@ -18,11 +20,10 @@ const REGISTERED_PROVIDERS = [
   'auto'
 ];
 
-
-const REQUIRED_API_KEY = process.env.REQUIRED_API_KEY || '123456';
-
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const config = loadConfig();
+  const REQUIRED_API_KEY = config.REQUIRED_API_KEY || '123456';
   
   
   if (pathname.startsWith('/api/') || 

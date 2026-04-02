@@ -43,6 +43,7 @@ fi
 
 # Создание директорий
 mkdir -p data configs
+chmod -R 777 data configs
 
 # Сборка и запуск
 echo "[BUILD] Сборка Docker образа..."
