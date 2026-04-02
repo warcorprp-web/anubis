@@ -1,7 +1,4 @@
-/**
- * Provider models mapping (ported from provider-models.js)
- * Defines which models each provider supports
- */
+
 
 export const PROVIDER_MODELS: Record<string, string[]> = {
     'gemini-cli-oauth': [
@@ -57,16 +54,12 @@ export const PROVIDER_MODELS: Record<string, string[]> = {
     ]
 };
 
-/**
- * Get supported models for a provider type (точь-в-точь как в оригинале)
- */
+
 export function getProviderModels(providerType: string): string[] {
     return PROVIDER_MODELS[providerType] || [];
 }
 
-/**
- * Get all provider models (точь-в-точь как в оригинале)
- */
+
 export function getAllProviderModels(): Record<string, string[]> {
     return PROVIDER_MODELS;
 }

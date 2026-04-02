@@ -1,7 +1,4 @@
-/**
- * OpenAI Converter (simplified port from OpenAIConverter.js)
- * Handles conversions between OpenAI and other protocols
- */
+
 
 import { BaseConverter } from '../BaseConverter';
 import { MODEL_PROTOCOL_PREFIX } from '../../utils/common';
@@ -19,7 +16,7 @@ export class OpenAIConverter extends BaseConverter {
             case MODEL_PROTOCOL_PREFIX.GEMINI:
                 return this.toGeminiRequest(data);
             case MODEL_PROTOCOL_PREFIX.OPENAI:
-                return data; // No conversion needed
+                return data; 
             default:
                 logger.warn(`[OpenAI Converter] Unsupported target: ${targetProtocol}`);
                 return data;
@@ -64,16 +61,14 @@ export class OpenAIConverter extends BaseConverter {
         return data;
     }
 
-    /**
-     * Convert OpenAI response to Claude format (точь-в-точь как в оригинале)
-     */
+    
     private toClaudeResponse(openaiResponse: any, model?: string): any {
         logger.info(`[OpenAI Converter] Converting OpenAI response to Claude format`);
         
-        // Extract content from OpenAI response (точь-в-точь как в оригинале)
+        
         const content = openaiResponse.choices?.[0]?.message?.content || '';
 
-        // Build Claude response (точь-в-точь как в оригинале)
+        
         return {
             id: openaiResponse.id || `msg_${Date.now()}`,
             type: 'message',
@@ -94,16 +89,14 @@ export class OpenAIConverter extends BaseConverter {
         };
     }
 
-    /**
-     * Convert OpenAI response to Gemini format (точь-в-точь как в оригинале)
-     */
+    
     private toGeminiResponse(openaiResponse: any, model?: string): any {
         logger.info(`[OpenAI Converter] Converting OpenAI response to Gemini format`);
         
-        // Extract content from OpenAI response (точь-в-точь как в оригинале)
+        
         const content = openaiResponse.choices?.[0]?.message?.content || '';
 
-        // Build Gemini response (точь-в-точь как в оригинале)
+        
         return {
             candidates: [
                 {
@@ -127,9 +120,7 @@ export class OpenAIConverter extends BaseConverter {
         };
     }
 
-    /**
-     * Map OpenAI finish reason to Claude format (точь-в-точь как в оригинале)
-     */
+    
     private mapFinishReasonToClaude(openaiReason?: string): string {
         switch (openaiReason) {
             case 'stop':
@@ -146,9 +137,7 @@ export class OpenAIConverter extends BaseConverter {
         }
     }
 
-    /**
-     * Map OpenAI finish reason to Gemini format (точь-в-точь как в оригинале)
-     */
+    
     private mapFinishReasonToGemini(openaiReason?: string): string {
         switch (openaiReason) {
             case 'stop':
@@ -165,7 +154,7 @@ export class OpenAIConverter extends BaseConverter {
         }
     }
 
-    // Stub methods for other conversions
+    
     private toOpenAIResponsesResponse(data: any, model?: string): any {
         return data;
     }
@@ -186,23 +175,21 @@ export class OpenAIConverter extends BaseConverter {
         return data;
     }
 
-    /**
-     * Convert OpenAI request to Claude format (точь-в-точь как в оригинале)
-     */
+    
     private toClaudeRequest(openaiRequest: any): any {
         const messages = openaiRequest.messages || [];
         
-        // Extract system messages (точь-в-точь как в оригинале)
+        
         const systemMessages = messages.filter((m: any) => m.role === 'system');
         const nonSystemMessages = messages.filter((m: any) => m.role !== 'system');
         
         const systemInstruction = systemMessages.map((m: any) => m.content).join('\n');
 
-        // Convert messages to Claude format (точь-в-точь как в оригинале)
+        
         const claudeMessages = nonSystemMessages.map((message: any) => {
             const role = message.role === 'assistant' ? 'assistant' : 'user';
             
-            // Simple text content
+            
             if (typeof message.content === 'string') {
                 return {
                     role,
@@ -210,14 +197,14 @@ export class OpenAIConverter extends BaseConverter {
                 };
             }
             
-            // Array content (multimodal)
+            
             if (Array.isArray(message.content)) {
                 const content = message.content.map((item: any) => {
                     if (item.type === 'text') {
                         return { type: 'text', text: item.text };
                     }
                     if (item.type === 'image_url') {
-                        // Convert image URL to Claude format
+                        
                         const imageUrl = typeof item.image_url === 'string' 
                             ? item.image_url 
                             : item.image_url.url;
@@ -244,7 +231,7 @@ export class OpenAIConverter extends BaseConverter {
             return { role, content: message.content };
         });
 
-        // Build Claude request (точь-в-точь как в оригинале)
+        
         const claudeRequest: any = {
             model: openaiRequest.model,
             messages: claudeMessages,
@@ -270,23 +257,21 @@ export class OpenAIConverter extends BaseConverter {
         return claudeRequest;
     }
 
-    /**
-     * Convert OpenAI request to Gemini format (точь-в-точь как в оригинале)
-     */
+    
     private toGeminiRequest(openaiRequest: any): any {
         const messages = openaiRequest.messages || [];
         
-        // Extract system messages (точь-в-точь как в оригинале)
+        
         const systemMessages = messages.filter((m: any) => m.role === 'system');
         const nonSystemMessages = messages.filter((m: any) => m.role !== 'system');
         
         const systemInstruction = systemMessages.map((m: any) => m.content).join('\n');
 
-        // Convert messages to Gemini format (точь-в-точь как в оригинале)
+        
         const geminiContents = nonSystemMessages.map((message: any) => {
             const role = message.role === 'assistant' ? 'model' : 'user';
             
-            // Simple text content
+            
             if (typeof message.content === 'string') {
                 return {
                     role,
@@ -294,14 +279,14 @@ export class OpenAIConverter extends BaseConverter {
                 };
             }
             
-            // Array content (multimodal)
+            
             if (Array.isArray(message.content)) {
                 const parts = message.content.map((item: any) => {
                     if (item.type === 'text') {
                         return { text: item.text };
                     }
                     if (item.type === 'image_url') {
-                        // Convert image URL to Gemini format
+                        
                         const imageUrl = typeof item.image_url === 'string' 
                             ? item.image_url 
                             : item.image_url.url;
@@ -329,7 +314,7 @@ export class OpenAIConverter extends BaseConverter {
             };
         });
 
-        // Build Gemini request (точь-в-точь как в оригинале)
+        
         const geminiRequest: any = {
             contents: geminiContents,
         };
@@ -340,7 +325,7 @@ export class OpenAIConverter extends BaseConverter {
             };
         }
 
-        // Generation config (точь-в-точь как в оригинале)
+        
         const generationConfig: any = {};
 
         if (openaiRequest.max_tokens !== undefined) {
@@ -362,13 +347,11 @@ export class OpenAIConverter extends BaseConverter {
         return geminiRequest;
     }
 
-    /**
-     * Convert OpenAI stream chunk to Claude format (точь-в-точь как в оригинале)
-     */
+    
     private toClaudeStreamChunk(openaiChunk: any, model?: string): any {
         if (!openaiChunk) return null;
 
-        // Обработка OpenAI chunk объекта (точь-в-точь как в оригинале)
+        
         if (typeof openaiChunk === 'object' && !Array.isArray(openaiChunk)) {
             const choice = openaiChunk.choices?.[0];
             if (!choice) {
@@ -379,7 +362,7 @@ export class OpenAIConverter extends BaseConverter {
             const finishReason = choice.finish_reason;
             const events = [];
 
-            // Обработка reasoning_content (точь-в-точь как в оригинале)
+            
             if (delta?.reasoning_content) {
                 events.push({
                     type: 'content_block_delta',
@@ -391,7 +374,7 @@ export class OpenAIConverter extends BaseConverter {
                 });
             }
 
-            // Обработка обычного текста (точь-в-точь как в оригинале)
+            
             if (delta?.content) {
                 events.push({
                     type: 'content_block_delta',
@@ -403,7 +386,7 @@ export class OpenAIConverter extends BaseConverter {
                 });
             }
 
-            // Обработка finish_reason (точь-в-точь как в оригинале)
+            
             if (finishReason) {
                 const stopReason = finishReason === 'stop' ? 'end_turn' :
                     finishReason === 'length' ? 'max_tokens' :
@@ -436,7 +419,7 @@ export class OpenAIConverter extends BaseConverter {
             return events.length > 0 ? events : null;
         }
 
-        // Обратная совместимость: строковый формат (точь-в-точь как в оригинале)
+        
         if (typeof openaiChunk === 'string') {
             return {
                 type: 'content_block_delta',
@@ -452,17 +435,17 @@ export class OpenAIConverter extends BaseConverter {
     }
 
     private toGeminiStreamChunk(chunk: any, model?: string): any {
-        // TODO: Implement
+        
         return chunk;
     }
 
     private toOpenAIResponsesStreamChunk(chunk: any, model?: string): any {
-        // TODO: Implement
+        
         return chunk;
     }
 
     private toGrokStreamChunk(chunk: any, model?: string): any {
-        // TODO: Implement
+        
         return chunk;
     }
 }

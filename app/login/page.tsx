@@ -45,7 +45,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
+        {}
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-2" style={{ color: '#de610d' }}>
             ANUBIS
@@ -55,7 +55,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Login Card */}
+        {}
         <div className="bg-white rounded-lg p-8">
           <div className="flex items-center gap-3 mb-6">
             <Icon icon="pixelarticons:lock" width="24" height="24" style={{ color: '#de610d' }} />
@@ -65,7 +65,7 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleLogin}>
-            {/* Password Input */}
+            {}
             <div className="mb-6">
               <label className="block mb-2 text-sm font-semibold" style={{ color: '#374151' }}>
                 Пароль
@@ -102,7 +102,7 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Login Button */}
+            {}
             <button
               type="submit"
               disabled={loading}
@@ -129,7 +129,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Info */}
+          {}
           <div className="mt-6 pt-6 border-t border-gray-200">
             <div className="flex items-start gap-2 text-sm" style={{ color: '#6b7280' }}>
               <Icon icon="pixelarticons:info" width="16" height="16" className="mt-0.5 flex-shrink-0" />
@@ -142,7 +142,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Footer */}
+        {}
         <div className="text-center mt-6 text-sm" style={{ color: '#6b7280' }}>
           <p className="flex items-center justify-center gap-2">
             Создано силами 

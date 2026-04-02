@@ -6,7 +6,7 @@ export default function DocsPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="space-y-8">
-        {/* Header */}
+        {}
         <div className="space-y-6">
           <div className="flex items-center gap-3 mb-2">
             <Icon icon="pixelarticons:book" width="24" style={{ color: '#de610d' }} />
@@ -17,7 +17,7 @@ export default function DocsPage() {
           </p>
         </div>
 
-        {/* What is it */}
+        {}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
             <Icon icon="pixelarticons:question" width="24" style={{ color: '#de610d' }} />
@@ -30,7 +30,7 @@ export default function DocsPage() {
           </p>
         </section>
 
-        {/* Why */}
+        {}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
             <Icon icon="pixelarticons:lightbulb" width="24" style={{ color: '#de610d' }} />
@@ -82,7 +82,7 @@ export default function DocsPage() {
           </ul>
         </section>
 
-        {/* How it works */}
+        {}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
             <Icon icon="pixelarticons:cpu" width="24" style={{ color: '#de610d' }} />
@@ -128,7 +128,7 @@ export default function DocsPage() {
           </ol>
         </section>
 
-        {/* Quick Start */}
+        {}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
             <Icon icon="pixelarticons:zap" width="24" style={{ color: '#de610d' }} />
@@ -177,7 +177,7 @@ export default function DocsPage() {
           </div>
         </section>
 
-        {/* Features */}
+        {}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
             <Icon icon="pixelarticons:star" width="24" style={{ color: '#de610d' }} />
@@ -211,7 +211,7 @@ export default function DocsPage() {
           </div>
         </section>
 
-        {/* Footer */}
+        {}
         <div className="text-center pt-8">
           <p className="text-gray-600 flex items-center justify-center gap-2">
             Создано силами 

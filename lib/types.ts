@@ -1,4 +1,4 @@
-// Provider Types
+
 export type ProviderType = 
   | 'gemini-cli-oauth'
   | 'gemini-antigravity'
@@ -11,7 +11,7 @@ export type ProviderType =
   | 'openaiResponses-custom'
   | 'forward-api';
 
-// Provider Config
+
 export interface ProviderConfig {
   uuid: string;
   checkModelName?: string;
@@ -26,7 +26,7 @@ export interface ProviderConfig {
   lastHealthCheckModel?: string | null;
   lastErrorMessage?: string | null;
   
-  // Additional fields
+  
   refreshCount?: number;
   lastRefreshTime?: number;
   needsRefresh?: boolean;
@@ -34,7 +34,7 @@ export interface ProviderConfig {
   notSupportedModels?: string[];
   _lastSelectionSeq?: number;
   
-  // Provider-specific fields
+  
   GEMINI_OAUTH_CREDS_FILE_PATH?: string;
   ANTIGRAVITY_OAUTH_CREDS_FILE_PATH?: string;
   KIRO_OAUTH_CREDS_FILE_PATH?: string;
@@ -49,12 +49,12 @@ export interface ProviderConfig {
   FORWARD_BASE_URL?: string;
 }
 
-// Provider Pools
+
 export interface ProviderPools {
   [key: string]: ProviderConfig[];
 }
 
-// App Config
+
 export interface AppConfig {
   REQUIRED_API_KEY: string;
   SERVER_PORT: number;
@@ -93,7 +93,7 @@ export interface AppConfig {
   TLS_SIDECAR_PROXY_URL: string | null;
 }
 
-// Usage Stats
+
 export interface UsageStats {
   totalRequests: number;
   totalTokens: number;
@@ -104,7 +104,7 @@ export interface UsageStats {
   }>;
 }
 
-// OAuth Credentials
+
 export interface OAuthCredentials {
   access_token: string;
   refresh_token: string;
@@ -113,7 +113,7 @@ export interface OAuthCredentials {
   scope?: string;
 }
 
-// API Response
+
 export interface ApiResponse<T = any> {
   success?: boolean;
   data?: T;

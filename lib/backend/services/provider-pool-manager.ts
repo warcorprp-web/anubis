@@ -1,7 +1,4 @@
-/**
- * Manages a pool of API service providers, handling their health and selection.
- * Ported line-by-line from aiclient-2-api/src/providers/provider-pool-manager.js
- */
+
 
 import { loadProviderPools, saveProviderPools, loadConfig } from '@/lib/storage';
 import { getServiceAdapter } from '../providers/adapter';
@@ -19,7 +16,7 @@ interface RefreshQueue {
 }
 
 export class ProviderPoolManager {
-    // Константы для health check моделей (точь-в-точь как в оригинале)
+    
     static DEFAULT_HEALTH_CHECK_MODELS: Record<string, string> = {
         'gemini-cli-oauth': 'gemini-2.5-flash',
         'gemini-antigravity': 'gemini-2.5-flash',
@@ -90,9 +87,7 @@ export class ProviderPoolManager {
         this.initializeProviderStatus();
     }
 
-    /**
-     * Инициализация статусов провайдеров (точь-в-точь как в оригинале)
-     */
+    
     private initializeProviderStatus() {
         for (const providerType in this.providerPools) {
             this.providerStatus[providerType] = [];
@@ -109,16 +104,14 @@ export class ProviderPoolManager {
         this._log('info', `Initialized provider status for ${Object.keys(this.providerStatus).length} provider types.`);
     }
 
-    /**
-     * Логирование (точь-в-точь как в оригинале)
-     */
+    
     private _log(level: string, message: string, ...args: any[]) {
         const levels = ['debug', 'info', 'warn', 'error'];
         const currentLevelIndex = levels.indexOf(this.logLevel);
         const messageLevelIndex = levels.indexOf(level);
 
         if (messageLevelIndex >= currentLevelIndex) {
-            // Безопасный вызов logger
+            
             try {
                 const logMethod = (logger as any)[level] || logger.info;
                 logMethod(`[ProviderPoolManager] ${message}`, ...args);
@@ -128,25 +121,21 @@ export class ProviderPoolManager {
         }
     }
 
-    /**
-     * Получить количество здоровых провайдеров (точь-в-точь как в оригинале)
-     */
+    
     getHealthyCount(providerType: string): number {
         const providers = this.providerStatus[providerType] || [];
         return providers.filter(p => p.config.isHealthy && !p.config.isDisabled).length;
     }
 
-    /**
-     * Выбор провайдера (точь-в-точь как в оригинале)
-     */
+    
     async selectProvider(providerType: string, requestedModel: string | null = null, options: any = {}): Promise<ProviderConfig | null> {
-        // Параметры валидация (точь-в-точь как в оригинале)
+        
         if (!providerType || typeof providerType !== 'string') {
             this._log('error', `Invalid providerType: ${providerType}`);
             return null;
         }
 
-        // Mutex lock для конкурентного доступа (точь-в-точь как в оригинале)
+        
         while (this._isSelecting[providerType]) {
             await new Promise(resolve => setImmediate(resolve));
         }
@@ -160,13 +149,11 @@ export class ProviderPoolManager {
         }
     }
 
-    /**
-     * Внутренний метод выбора провайдера (точь-в-точь как в оригинале)
-     */
+    
     private _doSelectProvider(providerType: string, requestedModel: string | null, options: any): ProviderConfig | null {
         const availableProviders = this.providerStatus[providerType] || [];
 
-        // Проверка и восстановление провайдеров (точь-в-точь как в оригинале)
+        
         this._checkAndRecoverScheduledProviders(providerType);
 
         const now = Date.now();
@@ -176,13 +163,13 @@ export class ProviderPoolManager {
             p.config.isHealthy && !p.config.isDisabled && !p.config.needsRefresh
         );
 
-        // Фильтрация по модели (точь-в-точь как в оригинале)
+        
         if (requestedModel) {
-            // Импортируем getProviderModels (точь-в-точь как в оригинале)
+            
             const { getProviderModels } = require('../providers/provider-models');
             const supportedModels = getProviderModels(providerType);
             
-            // Если список моделей пустой - провайдер поддерживает все модели (точь-в-точь как в оригинале)
+            
             if (supportedModels.length > 0 && !supportedModels.includes(requestedModel)) {
                 this._log('warn', `Provider ${providerType} does not support model: ${requestedModel}`);
                 return null;
@@ -196,16 +183,16 @@ export class ProviderPoolManager {
             return null;
         }
 
-        // Сортировка по score (точь-в-точь как в оригинале)
+        
         const selected = availableAndHealthyProviders.sort((a, b) => {
             const scoreA = this._calculateNodeScore(a, now, minSeq);
             const scoreB = this._calculateNodeScore(b, now, minSeq);
             if (scoreA !== scoreB) return scoreA - scoreB;
-            // Если score одинаковый - сортируем по UUID для детерминизма
+            
             return a.uuid < b.uuid ? -1 : 1;
         })[0];
 
-        // Обновляем lastUsed и sequence (точь-в-точь как в оригинале)
+        
         selected.config.lastUsed = new Date().toISOString();
         this._selectionSequence++;
         selected.config._lastSelectionSeq = this._selectionSequence;
@@ -223,9 +210,7 @@ export class ProviderPoolManager {
         return selected.config;
     }
 
-    /**
-     * Проверка и восстановление провайдеров по расписанию (точь-в-точь как в оригинале)
-     */
+    
     private _checkAndRecoverScheduledProviders(providerType: string) {
         const providers = this.providerStatus[providerType] || [];
         const now = new Date();
@@ -244,36 +229,34 @@ export class ProviderPoolManager {
         }
     }
 
-    /**
-     * Расчет score для сортировки провайдеров (точь-в-точь как в оригинале)
-     */
+    
     private _calculateNodeScore(providerStatus: ProviderStatus, now?: number, minSeq?: number): number {
         const config = providerStatus.config;
         let score = 0;
         const currentTime = now || Date.now();
 
-        // 1. Нездоровые - в конец (точь-в-точь как в оригинале)
+        
         if (!config.isHealthy) score += 1000000;
 
-        // 2. Отключенные - в конец (точь-в-точь как в оригинале)
+        
         if (config.isDisabled) score += 1000000;
 
-        // 3. Нуждающиеся в refresh - в конец (точь-в-точь как в оригинале)
+        
         if (config.needsRefresh) score += 1000000;
 
-        // 4. Количество ошибок (точь-в-точь как в оригинале)
+        
         score += (config.errorCount || 0) * 1000;
 
-        // 5. Количество использований (точь-в-точь как в оригинале)
+        
         score += (config.usageCount || 0);
 
-        // 6. Последнее использование - давно использованные = лучше (точь-в-точь как в оригинале)
+        
         if (config.lastUsed) {
             const timeSinceLastUse = currentTime - new Date(config.lastUsed).getTime();
-            score -= timeSinceLastUse / 1000; // Вычитаем секунды
+            score -= timeSinceLastUse / 1000; 
         }
 
-        // 7. Sequence number для разрешения конфликтов (точь-в-точь как в оригинале)
+        
         if (config._lastSelectionSeq !== undefined && minSeq !== undefined) {
             score += (config._lastSelectionSeq - minSeq) * 0.001;
         }
@@ -281,9 +264,7 @@ export class ProviderPoolManager {
         return score;
     }
 
-    /**
-     * Пометить провайдер как нездоровый (точь-в-точь как в оригинале)
-     */
+    
     async markProviderUnhealthy(providerType: string, uuid: string, errorMessage: string | null) {
         const provider = this._findProvider(providerType, uuid);
         if (!provider) {
@@ -293,9 +274,9 @@ export class ProviderPoolManager {
 
         const now = Date.now();
         const lastErrorTime = provider.config.lastErrorTime ? new Date(provider.config.lastErrorTime).getTime() : 0;
-        const ERROR_WINDOW_MS = 10000; // 10 секунд
+        const ERROR_WINDOW_MS = 10000; 
 
-        // Если > 10 секунд с последней ошибки - сбрасываем счетчик
+        
         if (now - lastErrorTime > ERROR_WINDOW_MS) {
             provider.config.errorCount = 1;
         } else {
@@ -309,7 +290,7 @@ export class ProviderPoolManager {
             provider.config.lastErrorMessage = errorMessage;
         }
 
-        // Если достигли maxErrorCount (10) - помечаем unhealthy
+        
         if (provider.config.errorCount >= this.maxErrorCount) {
             provider.config.isHealthy = false;
             this._log('warn', `Marked provider as unhealthy: ${uuid} (${providerType})`);
@@ -318,9 +299,7 @@ export class ProviderPoolManager {
         this._debouncedSave(providerType);
     }
 
-    /**
-     * Пометить провайдер как нездоровый немедленно (точь-в-точь как в оригинале)
-     */
+    
     async markProviderUnhealthyImmediately(providerType: string, uuid: string, errorMessage: string | null) {
         const provider = this._findProvider(providerType, uuid);
         if (!provider) {
@@ -329,7 +308,7 @@ export class ProviderPoolManager {
         }
 
         provider.config.isHealthy = false;
-        provider.config.errorCount = this.maxErrorCount; // Сразу максимум
+        provider.config.errorCount = this.maxErrorCount; 
         provider.config.lastErrorTime = new Date().toISOString();
         provider.config.lastUsed = new Date().toISOString();
 
@@ -341,9 +320,7 @@ export class ProviderPoolManager {
         this._debouncedSave(providerType);
     }
 
-    /**
-     * Пометить провайдер как здоровый (точь-в-точь как в оригинале)
-     */
+    
     async markProviderHealthy(providerType: string, uuid: string, resetUsageCount: boolean = false, healthCheckModel: string | null = null) {
         const provider = this._findProvider(providerType, uuid);
         if (!provider) {
@@ -368,9 +345,7 @@ export class ProviderPoolManager {
         this._debouncedSave(providerType);
     }
 
-    /**
-     * Увеличить счетчик использований (точь-в-точь как в оригинале)
-     */
+    
     async incrementProviderUsage(providerType: string, uuid: string) {
         const provider = this._findProvider(providerType, uuid);
         if (!provider) {
@@ -384,17 +359,13 @@ export class ProviderPoolManager {
         this._debouncedSave(providerType);
     }
 
-    /**
-     * Найти провайдер по UUID (точь-в-точь как в оригинале)
-     */
+    
     private _findProvider(providerType: string, uuid: string): ProviderStatus | null {
         const providers = this.providerStatus[providerType] || [];
         return providers.find(p => p.uuid === uuid) || null;
     }
 
-    /**
-     * Отложенное сохранение (точь-в-точь как в оригинале)
-     */
+    
     private _debouncedSave(providerType: string) {
         this.pendingSaves.add(providerType);
 
@@ -407,9 +378,7 @@ export class ProviderPoolManager {
         }, this.saveDebounceTime);
     }
 
-    /**
-     * Сохранение всех pending изменений (точь-в-точь как в оригинале)
-     */
+    
     private async _flushSaves() {
         if (this.pendingSaves.size === 0) return;
 
@@ -417,7 +386,7 @@ export class ProviderPoolManager {
         this.pendingSaves.clear();
 
         try {
-            // Обновляем pools из providerStatus
+            
             for (const providerType of typesToSave) {
                 const statuses = this.providerStatus[providerType] || [];
                 this.providerPools[providerType] = statuses.map(s => s.config);
@@ -430,19 +399,17 @@ export class ProviderPoolManager {
         }
     }
 
-    /**
-     * Добавить в очередь refresh (точь-в-точь как в оригинале)
-     */
+    
     private _enqueueRefresh(providerType: string, providerStatus: ProviderStatus, force: boolean = false) {
         const uuid = providerStatus.uuid;
 
-        // Если уже в refresh - пропускаем
+        
         if (this.refreshingUuids.has(uuid)) {
             this._log('debug', `Node ${uuid} is already in refresh queue.`);
             return;
         }
 
-        // Если здоровых < 5 - сразу в очередь без буфера
+        
         const healthyCount = this.getHealthyCount(providerType);
         if (healthyCount < 5) {
             this._log('info', `Provider ${providerType} has only ${healthyCount} healthy nodes. Bypassing buffer.`);
@@ -450,7 +417,7 @@ export class ProviderPoolManager {
             return;
         }
 
-        // Инициализируем буфер
+        
         if (!this.refreshBufferQueues[providerType]) {
             this.refreshBufferQueues[providerType] = new Map();
         }
@@ -459,7 +426,7 @@ export class ProviderPoolManager {
         const existing = bufferQueue.get(uuid);
         const isNewEntry = !existing;
 
-        // Добавляем/обновляем в буфере
+        
         bufferQueue.set(uuid, {
             providerStatus,
             force: existing ? (existing.force || force) : force
@@ -469,7 +436,7 @@ export class ProviderPoolManager {
             this._log('debug', `Node ${uuid} added to buffer queue. Size: ${bufferQueue.size}`);
         }
 
-        // Устанавливаем таймер на flush буфера
+        
         if (isNewEntry || !this.refreshBufferTimers[providerType]) {
             if (this.refreshBufferTimers[providerType]) {
                 clearTimeout(this.refreshBufferTimers[providerType]);
@@ -481,9 +448,7 @@ export class ProviderPoolManager {
         }
     }
 
-    /**
-     * Flush буфера refresh (точь-в-точь как в оригинале)
-     */
+    
     private _flushRefreshBuffer(providerType: string) {
         const bufferQueue = this.refreshBufferQueues[providerType];
         if (!bufferQueue || bufferQueue.size === 0) return;
@@ -498,9 +463,7 @@ export class ProviderPoolManager {
         delete this.refreshBufferTimers[providerType];
     }
 
-    /**
-     * Немедленно добавить в очередь refresh (точь-в-точь как в оригинале)
-     */
+    
     private _enqueueRefreshImmediate(providerType: string, providerStatus: ProviderStatus, force: boolean = false) {
         const uuid = providerStatus.uuid;
 
@@ -511,7 +474,7 @@ export class ProviderPoolManager {
 
         this.refreshingUuids.add(uuid);
 
-        // Инициализируем очередь провайдера
+        
         if (!this.refreshQueues[providerType]) {
             this.refreshQueues[providerType] = {
                 activeCount: 0,
@@ -534,7 +497,7 @@ export class ProviderPoolManager {
 
                 currentQueue.activeCount--;
 
-                // Берем следующую задачу из очереди
+                
                 if (currentQueue.waitingTasks.length > 0) {
                     const nextTask = currentQueue.waitingTasks.shift();
                     if (nextTask) {
@@ -545,7 +508,7 @@ export class ProviderPoolManager {
             }
         };
 
-        // Проверяем лимит параллельности
+        
         if (queue.activeCount < this.refreshConcurrency.perProvider) {
             queue.activeCount++;
             runTask();
@@ -555,15 +518,13 @@ export class ProviderPoolManager {
         }
     }
 
-    /**
-     * Refresh токена для ноды (точь-в-точь как в оригинале)
-     */
+    
     private async _refreshNodeToken(providerType: string, providerStatus: ProviderStatus, force: boolean = false) {
         const config = providerStatus.config;
         const uuid = config.uuid;
 
         try {
-            // Проверка максимального количества попыток refresh
+            
             const currentRefreshCount = config.refreshCount || 0;
             if (currentRefreshCount >= 5) {
                 this._log('warn', `Node ${uuid} reached max refresh count (5), marking unhealthy`);
@@ -571,7 +532,7 @@ export class ProviderPoolManager {
                 return;
             }
 
-            // Создаем конфигурацию провайдера
+            
             const tempConfig = {
                 ...this.globalConfig,
                 ...config,
@@ -579,10 +540,10 @@ export class ProviderPoolManager {
                 refreshCount: currentRefreshCount + 1
             };
 
-            // Получаем экземпляр через getServiceAdapter
+            
             const serviceAdapter = getServiceAdapter(tempConfig);
 
-            // Вызываем refreshToken
+            
             if (typeof serviceAdapter.refreshToken === 'function') {
                 const startTime = Date.now();
                 await serviceAdapter.refreshToken();
@@ -590,7 +551,7 @@ export class ProviderPoolManager {
 
                 this._log('info', `Token refresh success for ${uuid} (Duration: ${duration}ms)`);
 
-                // Сбрасываем счетчики после успешного refresh
+                
                 config.refreshCount = 0;
                 config.lastRefreshTime = Date.now();
                 this._debouncedSave(providerType);
@@ -601,20 +562,16 @@ export class ProviderPoolManager {
         }
     }
 
-    /**
-     * Получить все провайдеры определенного типа
-     */
+    
     getProviders(providerType: string): ProviderConfig[] {
         return this.providerPools[providerType] || [];
     }
 
-    /**
-     * Get all available models from all providers (точь-в-точь как в оригинале)
-     */
+    
     async getAllAvailableModels(endpointType: string | null = null): Promise<any> {
         const allModels: Array<{ id: string; provider: string; model: string }> = [];
         
-        // Получаем все зарегистрированные провайдеры (точь-в-точь как в оригинале)
+        
         const { getRegisteredProviders } = await import('../providers/adapter');
         const registeredProviders = getRegisteredProviders();
         const allProviderTypes = Array.from(new Set([...registeredProviders]));
@@ -624,7 +581,7 @@ export class ProviderPoolManager {
                 const { getProviderModels } = await import('../providers/provider-models');
                 let models = getProviderModels(providerType);
                 
-                // Если список моделей пустой, пытаемся получить из сервиса (точь-в-точь как в оригинале)
+                
                 if (models.length === 0) {
                     try {
                         let targetConfig = this.globalConfig;
@@ -667,12 +624,12 @@ export class ProviderPoolManager {
             }
         }
         
-        // Если не указан endpointType, возвращаем сырой массив (точь-в-точь как в оригинале)
+        
         if (!endpointType) {
             return allModels;
         }
         
-        // Конвертируем в формат endpoint (точь-в-точь как в оригинале)
+        
         const { ENDPOINT_TYPE } = await import('../utils/common');
         
         if (endpointType === ENDPOINT_TYPE.OPENAI_MODEL_LIST) {
@@ -701,9 +658,7 @@ export class ProviderPoolManager {
         return { data: [] };
     }
 
-    /**
-     * Release concurrency slot (точь-в-точь как в оригинале)
-     */
+    
     releaseSlot(providerType: string, uuid: string): void {
         if (!providerType || !uuid) return;
         
@@ -715,7 +670,7 @@ export class ProviderPoolManager {
             state.activeCount--;
         }
 
-        // Если в очереди есть ожидающие задачи, освобождаем следующую (точь-в-точь как в оригинале)
+        
         if (state.queue && state.queue.length > 0) {
             const next = state.queue.shift();
             if (next) {
@@ -724,20 +679,16 @@ export class ProviderPoolManager {
         }
     }
 
-    /**
-     * Получить все типы провайдеров
-     */
+    
     getProviderTypes(): string[] {
         return Object.keys(this.providerPools);
     }
 }
 
-// Singleton instance
+
 let poolManagerInstance: ProviderPoolManager | null = null;
 
-/**
- * Получить singleton instance ProviderPoolManager
- */
+
 export async function getProviderPoolManager(): Promise<ProviderPoolManager> {
     if (!poolManagerInstance) {
         const pools = await loadProviderPools();
@@ -747,9 +698,7 @@ export async function getProviderPoolManager(): Promise<ProviderPoolManager> {
     return poolManagerInstance;
 }
 
-/**
- * Сбросить singleton instance (для тестов)
- */
+
 export function resetProviderPoolManager() {
     poolManagerInstance = null;
 }

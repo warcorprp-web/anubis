@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     
     saveAdminPassword(adminPassword);
     
-    // Sync to env for middleware
+    
     process.env.REQUIRED_API_KEY = apiKey;
     
     return NextResponse.json({ success: true });

@@ -13,7 +13,7 @@ export async function POST(
     const body = await request.json();
     const config = await loadConfig();
 
-    // Маппинг провайдеров на директории
+    
     const providerDirMap: Record<string, string> = {
       'gemini-cli-oauth': 'gemini',
       'gemini-antigravity': 'antigravity',
@@ -23,13 +23,13 @@ export async function POST(
       'openai-codex-oauth': 'codex',
     };
 
-    // Добавляем providerDir в options
+    
     const options = {
       ...body,
       providerDir: providerDirMap[providerType] || providerType,
     };
 
-    // Импортируем OAuth handlers из портированного backend
+    
     const { 
       handleGeminiCliOAuth,
       handleGeminiAntigravityOAuth,

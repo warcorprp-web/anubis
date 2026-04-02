@@ -1,7 +1,4 @@
-/**
- * DELETE /api/providers/[providerType]/[uuid] - Delete provider
- * POST /api/providers/[providerType]/[uuid]/refresh - Refresh token
- */
+
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getProviderPoolManager } from '@/lib/backend/services/provider-pool-manager';
@@ -17,7 +14,7 @@ export async function DELETE(
         
         logger.info(`[Provider Delete] Deleting ${providerType}/${uuid}`);
         
-        // Загружаем пулы
+        
         const pools = await loadProviderPools();
         
         if (!pools[providerType]) {
@@ -27,7 +24,7 @@ export async function DELETE(
             );
         }
         
-        // Находим и удаляем провайдера
+        
         const index = pools[providerType].findIndex((p: any) => p.uuid === uuid);
         
         if (index === -1) {
@@ -39,7 +36,7 @@ export async function DELETE(
         
         pools[providerType].splice(index, 1);
         
-        // Сохраняем
+        
         await saveProviderPools(pools);
         
         logger.info(`[Provider Delete] Successfully deleted ${providerType}/${uuid}`);

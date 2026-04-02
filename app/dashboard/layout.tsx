@@ -56,7 +56,7 @@ export default function DashboardLayout({
 
   return (
     <>
-      {/* Header */}
+      {}
       <header className={`sticky top-0 z-50 transition-all duration-300 ${
         isScrolled 
           ? 'bg-[#f5f5f5] py-2 px-4'
@@ -114,7 +114,7 @@ export default function DashboardLayout({
         </div>
       </header>
 
-      {/* Content */}
+      {}
       <div className="bg-[#f5f5f5] min-h-screen overflow-x-hidden">
         {children}
       </div>

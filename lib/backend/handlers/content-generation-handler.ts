@@ -1,7 +1,4 @@
-/**
- * Universal API request handler (ported from aiclient-2-api)
- * Handles all API endpoints with provider rotation, conversion, and retry logic
- */
+
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getProviderPoolManager } from '@/lib/backend/services/provider-pool-manager';
@@ -19,20 +16,18 @@ interface RetryContext {
     clientDisconnected?: { value: boolean };
 }
 
-/**
- * Handle content generation request (ported from common.js::handleContentGenerationRequest)
- */
+
 export async function handleContentGenerationRequest(
     request: NextRequest,
     endpointType: string,
-    providerOverride?: string // Провайдер из пути (точь-в-точь как в оригинале)
+    providerOverride?: string 
 ): Promise<NextResponse> {
     try {
-        // Проверяем header от middleware
+        
         if (!providerOverride) {
             providerOverride = request.headers.get('x-provider-override') || undefined;
         }
-        // 1. Parse request body
+        
         const originalRequestBody = await request.json();
 
         if (!originalRequestBody) {
@@ -42,7 +37,7 @@ export async function handleContentGenerationRequest(
             );
         }
 
-        // 2. Determine client provider from endpoint type (точь-в-точь как в оригинале)
+        
         const clientProviderMap: Record<string, string> = {
             [ENDPOINT_TYPE.OPENAI_CHAT]: MODEL_PROTOCOL_PREFIX.OPENAI,
             [ENDPOINT_TYPE.OPENAI_RESPONSES]: MODEL_PROTOCOL_PREFIX.OPENAI_RESPONSES,
@@ -59,7 +54,7 @@ export async function handleContentGenerationRequest(
             );
         }
 
-        // 3. Extract model and stream info (точь-в-точь как в оригинале)
+        
         const { model, isStream } = extractModelAndStreamInfo(originalRequestBody, fromProvider);
 
         if (!model) {
@@ -71,12 +66,12 @@ export async function handleContentGenerationRequest(
 
         logger.info(`[Content Generation] Model: ${model}, Stream: ${isStream}`);
 
-        // 4. Get provider pool manager
+        
         const poolManager = await getProviderPoolManager();
         const globalConfig = await loadConfig();
 
-        // 5. Select provider for model (точь-в-точь как getApiServiceWithFallback)
-        // Если указан providerOverride - используем только его (точь-в-точь как в оригинале)
+        
+        
         const result = providerOverride 
             ? await selectSpecificProvider(poolManager, globalConfig, providerOverride, model)
             : await selectProviderForModel(poolManager, globalConfig, model);
@@ -94,7 +89,7 @@ export async function handleContentGenerationRequest(
         logger.info(`[Content Generation] Selected provider: ${providerType} (uuid: ${providerConfig.uuid})`);
         logger.info(`[Content Generation] Protocols: fromProvider=${fromProvider}, toProvider=${toProvider}`);
 
-        // 6. Convert request if needed (точь-в-точь как в оригинале)
+        
         let processedRequestBody = originalRequestBody;
 
         if (fromProvider !== toProvider) {
@@ -104,14 +99,14 @@ export async function handleContentGenerationRequest(
             logger.info(`[Request Convert] No conversion needed`);
         }
 
-        // 7. Create retry context (точь-в-точь как в оригинале)
+        
         const retryContext: RetryContext = {
             CONFIG: { ...globalConfig, MODEL_PROVIDER: providerType },
             currentRetry: 0,
             maxRetries: globalConfig.CREDENTIAL_SWITCH_MAX_RETRIES || 5
         };
 
-        // 8. Handle request (stream or unary)
+        
         if (isStream) {
             return await handleStreamRequest(
                 serviceAdapter,
@@ -148,9 +143,7 @@ export async function handleContentGenerationRequest(
     }
 }
 
-/**
- * Handle unary (non-streaming) request (ported from common.js::handleUnaryRequest)
- */
+
 async function handleUnaryRequest(
     service: any,
     model: string,
@@ -166,11 +159,11 @@ async function handleUnaryRequest(
     const { currentRetry, maxRetries, CONFIG } = retryContext;
 
     try {
-        // Make request to provider (точь-в-точь как в оригинале)
+        
         requestBody.model = model;
         const nativeResponse = await service.generateContent(model, requestBody);
 
-        // Convert response if needed (точь-в-точь как в оригинале)
+        
         let clientResponse = nativeResponse;
         const needsConversion = fromProvider !== toProvider;
 
@@ -179,7 +172,7 @@ async function handleUnaryRequest(
             clientResponse = convertData(nativeResponse, 'response', toProvider, fromProvider, model);
         }
 
-        // Mark provider healthy and increment usage (точь-в-точь как в оригинале)
+        
         const customNameDisplay = customName ? `, ${customName}` : '';
         logger.info(`[Provider Pool] Increasing usage count for ${providerType} (${uuid}${customNameDisplay})`);
         await poolManager.markProviderHealthy(providerType, uuid, false, null);
@@ -194,7 +187,7 @@ async function handleUnaryRequest(
         const shouldSwitchCredential = error.shouldSwitchCredential === true;
         let credentialMarkedUnhealthy = error.credentialMarkedUnhealthy === true;
 
-        // Mark provider unhealthy (точь-в-точь как в оригинале)
+        
         if (!credentialMarkedUnhealthy && !skipErrorCount) {
             if (status === 400) {
                 logger.info(`[Provider Pool] Skipping unhealthy marking due to status 400`);
@@ -209,7 +202,7 @@ async function handleUnaryRequest(
             credentialMarkedUnhealthy = true;
         }
 
-        // Retry with different credential (точь-в-точь как в оригинале)
+        
         if (credentialMarkedUnhealthy && currentRetry < maxRetries) {
             const randomDelay = Math.floor(Math.random() * 10000);
             logger.info(`[Unary Retry] Waiting ${randomDelay}ms before retry ${currentRetry + 1}/${maxRetries}`);
@@ -246,16 +239,13 @@ async function handleUnaryRequest(
             }
         }
 
-        // Return error response (точь-в-точь как в оригинале)
+        
         const errorResponse = createErrorResponse(error, fromProvider);
         return NextResponse.json(errorResponse, { status: status || 500 });
     }
 }
 
-/**
- * Handle streaming request (ported from common.js::handleStreamRequest)
- * Точь-в-точь как в оригинале, построчно
- */
+
 async function handleStreamRequest(
     service: any,
     model: string,
@@ -274,7 +264,7 @@ async function handleStreamRequest(
     const { currentRetry, maxRetries, CONFIG } = retryContext;
     const isRetry = currentRetry > 0;
     
-    // Используем общий clientDisconnected (точь-в-точь как в оригинале)
+    
     let clientDisconnected = retryContext.clientDisconnected || { value: false };
     if (!isRetry) {
         clientDisconnected = { value: false };
@@ -288,30 +278,30 @@ async function handleStreamRequest(
     const stream = new ReadableStream({
         async start(controller) {
             try {
-                // The service returns a stream in its native format (toProvider)
+                
                 const needsConversion = getProtocolPrefix(fromProvider) !== getProtocolPrefix(toProvider);
                 requestBody.model = model;
                 const nativeStream = await service.generateContentStream(model, requestBody);
                 const addEvent = getProtocolPrefix(fromProvider) === MODEL_PROTOCOL_PREFIX.CLAUDE || 
                                 getProtocolPrefix(fromProvider) === MODEL_PROTOCOL_PREFIX.OPENAI_RESPONSES;
                 
-                // Уникальный ID для изоляции состояния конвертера (точь-в-точь как в оригинале)
+                
                 const streamRequestId = `req_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 
                 for await (const nativeChunk of nativeStream) {
-                    // Проверка отключения клиента (точь-в-точь как в оригинале)
+                    
                     if (clientDisconnected.value) {
                         logger.info('[Stream] Stopping iteration due to client disconnect');
                         break;
                     }
                     
-                    // Extract text for logging (точь-в-точь как в оригинале)
+                    
                     const chunkText = extractResponseText(nativeChunk, toProvider);
                     if (chunkText && !Array.isArray(chunkText)) {
                         fullResponseText += chunkText;
                     }
 
-                    // Convert chunk if needed (точь-в-точь как в оригинале)
+                    
                     const chunkToSend = needsConversion
                         ? convertData(nativeChunk, 'streamChunk', toProvider, fromProvider, model, streamRequestId)
                         : nativeChunk;
@@ -320,7 +310,7 @@ async function handleStreamRequest(
                         continue;
                     }
 
-                    // Обработка массива или объекта (точь-в-точь как в оригинале)
+                    
                     const chunksToSend = Array.isArray(chunkToSend) ? chunkToSend : [chunkToSend];
 
                     for (const chunk of chunksToSend) {
@@ -328,7 +318,7 @@ async function handleStreamRequest(
                             break;
                         }
                         
-                        // Отслеживание tool calls (точь-в-точь как в оригинале)
+                        
                         if (chunk.choices?.[0]?.delta?.tool_calls || chunk.choices?.[0]?.finish_reason === 'tool_calls') {
                             hasToolCall = true;
                         }
@@ -342,7 +332,7 @@ async function handleStreamRequest(
                             hasToolCall = true;
                         }
 
-                        // Исправление finish_reason для tool calls (точь-в-точь как в оригинале)
+                        
                         if (hasToolCall && needsConversion) {
                             if (chunk.choices?.[0]?.finish_reason === 'stop') {
                                 chunk.choices[0].finish_reason = 'tool_calls';
@@ -353,7 +343,7 @@ async function handleStreamRequest(
                             }
                         }
 
-                        // Отслеживание окончания (точь-в-точь как в оригинале)
+                        
                         if (
                             chunk?.choices?.some((choice: any) => choice?.finish_reason) ||
                             chunk?.type === 'message_stop' ||
@@ -363,7 +353,7 @@ async function handleStreamRequest(
                             hasMessageStop = true;
                         }
 
-                        // Отправка event для Claude/OpenAI Responses (точь-в-точь как в оригинале)
+                        
                         if (addEvent) {
                             try {
                                 controller.enqueue(encoder.encode(`event: ${chunk.type}\n`));
@@ -375,7 +365,7 @@ async function handleStreamRequest(
                             }
                         }
 
-                        // Отправка data (точь-в-точь как в оригинале)
+                        
                         try {
                             controller.enqueue(encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`));
                             anyDataSent = true;
@@ -387,14 +377,14 @@ async function handleStreamRequest(
                     }
                 }
 
-                // Успешное завершение (точь-в-точь как в оригинале)
+                
                 if (poolManager && uuid) {
                     const customNameDisplay = customName ? `, ${customName}` : '';
                     logger.info(`[Provider Pool] Increasing usage count for ${providerType} (${uuid}${customNameDisplay}) after successful stream request`);
                     await poolManager.markProviderHealthy(providerType, uuid, false, null);
                 }
 
-                // Отправка завершающего маркера (точь-в-точь как в оригинале)
+                
                 if (!clientDisconnected.value && !isRetry) {
                     const clientProtocol = getProtocolPrefix(fromProvider);
                     
@@ -419,14 +409,14 @@ async function handleStreamRequest(
             } catch (error: any) {
                 logger.error('[Stream] Error during stream processing:', error.stack || error.message);
                 
-                // Если клиент отключился (точь-в-точь как в оригинале)
+                
                 if (clientDisconnected.value) {
                     logger.info('[Stream] Skipping error response due to client disconnect');
                     controller.close();
                     return;
                 }
                 
-                // Если данные уже отправлены - нельзя retry (точь-в-точь как в оригинале)
+                
                 if (anyDataSent) {
                     logger.info('[Stream Retry] Cannot retry: data already sent to client');
                     const errorPayload = createStreamErrorResponse(error, fromProvider);
@@ -440,7 +430,7 @@ async function handleStreamRequest(
                 const shouldSwitchCredential = error.shouldSwitchCredential === true;
                 let credentialMarkedUnhealthy = error.credentialMarkedUnhealthy === true;
                 
-                // Маркировка провайдера как нездорового (точь-в-точь как в оригинале)
+                
                 if (!credentialMarkedUnhealthy && !skipErrorCount && poolManager && uuid) {
                     if (error.response?.status === 400) {
                         logger.info(`[Provider Pool] Skipping unhealthy marking for ${providerType} (${uuid}) due to status 400 (client error)`);
@@ -455,7 +445,7 @@ async function handleStreamRequest(
                     credentialMarkedUnhealthy = true;
                 }
                 
-                // Retry с новым провайдером (точь-в-точь как в оригинале)
+                
                 if (credentialMarkedUnhealthy && currentRetry < maxRetries && poolManager && CONFIG) {
                     const randomDelay = Math.floor(Math.random() * 10000);
                     logger.info(`[Stream Retry] Credential marked unhealthy. Waiting ${randomDelay}ms before retry ${currentRetry + 1}/${maxRetries} with different credential...`);
@@ -475,12 +465,12 @@ async function handleStreamRequest(
                     }
                 }
 
-                // Отправка ошибки (точь-в-точь как в оригинале)
+                
                 const errorPayload = createStreamErrorResponse(error, fromProvider);
                 controller.enqueue(encoder.encode(errorPayload));
                 controller.close();
             } finally {
-                // Освобождение слота (точь-в-точь как в оригинале)
+                
                 if (poolManager && uuid) {
                     await poolManager.releaseSlot(providerType, uuid);
                 }
@@ -497,9 +487,7 @@ async function handleStreamRequest(
     });
 }
 
-/**
- * Create stream error response (ported from common.js::createStreamErrorResponse)
- */
+
 function createStreamErrorResponse(error: any, fromProvider: string): string {
     const clientProtocol = getProtocolPrefix(fromProvider);
     const errorMessage = error.message || 'Internal server error';
@@ -515,9 +503,7 @@ function createStreamErrorResponse(error: any, fromProvider: string): string {
     return `data: ${JSON.stringify({ error: { message: errorMessage } })}\n\n`;
 }
 
-/**
- * Extract response text (ported from common.js::extractResponseText)
- */
+
 function extractResponseText(response: any, provider: string): string {
     const protocol = getProtocolPrefix(provider);
     
@@ -538,16 +524,9 @@ function extractResponseText(response: any, provider: string): string {
     return '';
 }
 
-/**
-        return NextResponse.json(errorResponse, { status: status || 500 });
-    }
-}
 
-/**
- * Extract model and stream info from request (ported from common.js::_extractModelAndStreamInfo)
- */
 function extractModelAndStreamInfo(requestBody: any, fromProvider: string): { model: string; isStream: boolean } {
-    // OpenAI format
+    
     if (fromProvider === MODEL_PROTOCOL_PREFIX.OPENAI || fromProvider === MODEL_PROTOCOL_PREFIX.OPENAI_RESPONSES) {
         return {
             model: requestBody.model || '',
@@ -555,7 +534,7 @@ function extractModelAndStreamInfo(requestBody: any, fromProvider: string): { mo
         };
     }
 
-    // Claude format
+    
     if (fromProvider === MODEL_PROTOCOL_PREFIX.CLAUDE) {
         return {
             model: requestBody.model || '',
@@ -563,26 +542,24 @@ function extractModelAndStreamInfo(requestBody: any, fromProvider: string): { mo
         };
     }
 
-    // Gemini format
+    
     if (fromProvider === MODEL_PROTOCOL_PREFIX.GEMINI) {
         return {
             model: requestBody.model || '',
-            isStream: false // Gemini uses different endpoint for streaming
+            isStream: false 
         };
     }
 
     return { model: '', isStream: false };
 }
 
-/**
- * Select provider for model (ported from service-manager.js::getApiServiceWithFallback)
- */
+
 async function selectProviderForModel(poolManager: any, globalConfig: any, model: string) {
     const providerTypes = poolManager.getProviderTypes();
 
     for (const providerType of providerTypes) {
         try {
-            // Передаем модель в selectProvider для фильтрации (точь-в-точь как в оригинале)
+            
             const providerConfig = await poolManager.selectProvider(providerType, model, { skipUsageCount: false });
 
             if (!providerConfig) {
@@ -611,15 +588,12 @@ async function selectProviderForModel(poolManager: any, globalConfig: any, model
     return null;
 }
 
-/**
- * Select specific provider (ported from request-handler.js path routing)
- * Используется когда провайдер указан в пути: /{provider}/v1/...
- */
+
 async function selectSpecificProvider(poolManager: any, globalConfig: any, providerType: string, model: string) {
     try {
         logger.info(`[Provider Selection] Using specific provider from path: ${providerType}`);
         
-        // Выбираем провайдер указанного типа (точь-в-точь как в оригинале)
+        
         const providerConfig = await poolManager.selectProvider(providerType, model, { skipUsageCount: false });
 
         if (!providerConfig) {
@@ -646,14 +620,12 @@ async function selectSpecificProvider(poolManager: any, globalConfig: any, provi
     }
 }
 
-/**
- * Create error response in client format (ported from common.js::createErrorResponse)
- */
+
 function createErrorResponse(error: any, fromProvider: string): any {
     const message = error.message || 'An error occurred';
     const status = error.response?.status || error.statusCode || 500;
 
-    // OpenAI format
+    
     if (fromProvider === MODEL_PROTOCOL_PREFIX.OPENAI || fromProvider === MODEL_PROTOCOL_PREFIX.OPENAI_RESPONSES) {
         return {
             error: {
@@ -664,7 +636,7 @@ function createErrorResponse(error: any, fromProvider: string): any {
         };
     }
 
-    // Claude format
+    
     if (fromProvider === MODEL_PROTOCOL_PREFIX.CLAUDE) {
         return {
             type: 'error',
@@ -675,7 +647,7 @@ function createErrorResponse(error: any, fromProvider: string): any {
         };
     }
 
-    // Gemini format
+    
     if (fromProvider === MODEL_PROTOCOL_PREFIX.GEMINI) {
         return {
             error: {

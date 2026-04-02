@@ -1,6 +1,6 @@
-// Адаптация ui-manager для Next.js (SSE события)
 
-// Глобальное хранилище SSE клиентов
+
+
 const sseClients = new Set<any>();
 
 export function addSSEClient(client: any) {
@@ -27,7 +27,7 @@ export function broadcastEvent(eventType: string, data: any) {
     }
   });
   
-  // Удаляем мертвые клиенты
+  
   deadClients.forEach(client => sseClients.delete(client));
   
   console.log(`[SSE] Broadcasted ${eventType} to ${sseClients.size} clients`);

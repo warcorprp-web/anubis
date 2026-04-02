@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Парсим URL и делаем fetch напрямую на localhost callback сервер
+    
     const url = new URL(callbackUrl);
     url.hostname = 'localhost';
     url.protocol = 'http:';

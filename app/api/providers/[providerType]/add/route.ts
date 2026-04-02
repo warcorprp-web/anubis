@@ -19,7 +19,7 @@ export async function POST(
             pools[providerType] = [];
         }
         
-        // Create new provider config
+        
         const newProvider: any = {
             uuid: uuidv4(),
             isHealthy: true,

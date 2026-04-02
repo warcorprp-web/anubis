@@ -1,7 +1,4 @@
-/**
- * Claude Converter (simplified port from ClaudeConverter.js)
- * Handles conversions between Claude and other protocols
- */
+
 
 import { BaseConverter } from '../BaseConverter';
 import { MODEL_PROTOCOL_PREFIX } from '../../utils/common';
@@ -19,7 +16,7 @@ export class ClaudeConverter extends BaseConverter {
             case MODEL_PROTOCOL_PREFIX.GEMINI:
                 return this.toGeminiRequest(data);
             case MODEL_PROTOCOL_PREFIX.CLAUDE:
-                return data; // No conversion needed
+                return data; 
             default:
                 logger.warn(`[Claude Converter] Unsupported target: ${targetProtocol}`);
                 return data;
@@ -48,13 +45,11 @@ export class ClaudeConverter extends BaseConverter {
         return data;
     }
 
-    /**
-     * Convert Claude request to OpenAI format (точь-в-точь как в оригинале)
-     */
+    
     private toOpenAIRequest(claudeRequest: any): any {
         const messages: any[] = [];
 
-        // Add system message if present (точь-в-точь как в оригинале)
+        
         if (claudeRequest.system) {
             messages.push({
                 role: 'system',
@@ -62,12 +57,12 @@ export class ClaudeConverter extends BaseConverter {
             });
         }
 
-        // Convert Claude messages to OpenAI format (точь-в-точь как в оригинале)
+        
         if (claudeRequest.messages) {
             for (const message of claudeRequest.messages) {
                 const role = message.role === 'assistant' ? 'assistant' : 'user';
                 
-                // Simple text content
+                
                 if (typeof message.content === 'string') {
                     messages.push({
                         role,
@@ -76,14 +71,14 @@ export class ClaudeConverter extends BaseConverter {
                     continue;
                 }
                 
-                // Array content
+                
                 if (Array.isArray(message.content)) {
                     const content = message.content.map((item: any) => {
                         if (item.type === 'text') {
                             return { type: 'text', text: item.text };
                         }
                         if (item.type === 'image') {
-                            // Convert Claude image to OpenAI format
+                            
                             if (item.source?.type === 'base64') {
                                 return {
                                     type: 'image_url',
@@ -101,7 +96,7 @@ export class ClaudeConverter extends BaseConverter {
             }
         }
 
-        // Build OpenAI request (точь-в-точь как в оригинале)
+        
         const openaiRequest: any = {
             model: claudeRequest.model,
             messages,
@@ -126,11 +121,9 @@ export class ClaudeConverter extends BaseConverter {
         return openaiRequest;
     }
 
-    /**
-     * Convert Claude response to OpenAI format (точь-в-точь как в оригинале)
-     */
+    
     private toOpenAIResponse(claudeResponse: any, model?: string): any {
-        // Extract text content (точь-в-точь как в оригинале)
+        
         let content = '';
         if (Array.isArray(claudeResponse.content)) {
             content = claudeResponse.content
@@ -141,7 +134,7 @@ export class ClaudeConverter extends BaseConverter {
             content = claudeResponse.content;
         }
 
-        // Build OpenAI response (точь-в-точь как в оригинале)
+        
         return {
             id: claudeResponse.id || `chatcmpl-${Date.now()}`,
             object: 'chat.completion',
@@ -165,11 +158,9 @@ export class ClaudeConverter extends BaseConverter {
         };
     }
 
-    /**
-     * Convert Claude stream chunk to OpenAI format (точь-в-точь как в оригинале)
-     */
+    
     private toOpenAIStreamChunk(claudeChunk: any, model?: string): any {
-        // Handle different Claude event types (точь-в-точь как в оригинале)
+        
         if (claudeChunk.type === 'content_block_delta') {
             return {
                 id: `chatcmpl-${Date.now()}`,
@@ -204,12 +195,10 @@ export class ClaudeConverter extends BaseConverter {
             };
         }
 
-        return null; // Skip other event types
+        return null; 
     }
 
-    /**
-     * Map Claude finish reason to OpenAI format (точь-в-точь как в оригинале)
-     */
+    
     private mapFinishReason(claudeReason?: string): string {
         switch (claudeReason) {
             case 'end_turn':
@@ -223,11 +212,9 @@ export class ClaudeConverter extends BaseConverter {
         }
     }
 
-    /**
-     * Convert Claude request to Gemini format
-     */
+    
     private toGeminiRequest(claudeRequest: any): any {
-        // TODO: Implement Claude -> Gemini conversion
+        
         return claudeRequest;
     }
 }

@@ -8,7 +8,7 @@ export async function GET() {
   
   const stream = new ReadableStream({
     start(controller) {
-      // Создаем клиента для SSE
+      
       const client = {
         write: (data: string) => {
           controller.enqueue(encoder.encode(data));
@@ -16,19 +16,19 @@ export async function GET() {
         closed: false,
       };
 
-      // Добавляем клиента в список
+      
       addSSEClient(client);
 
-      // Отправляем начальное сообщение
+      
       client.write(`: connected\n\n`);
 
-      // Обработка закрытия соединения
+      
       const cleanup = () => {
         client.closed = true;
         removeSSEClient(client);
       };
 
-      // Очистка при закрытии
+      
       return cleanup;
     },
   });

@@ -59,23 +59,23 @@ export default function ProvidersPage() {
     loadProviders();
     loadSupported();
 
-    // Инициализируем background jobs (автообновление токенов)
+    
     fetch('/api/health').catch(console.error);
 
-    // Подключение к SSE для получения событий
+    
     const eventSource = new EventSource('/api/events');
 
     eventSource.addEventListener('oauth_success', (event) => {
       const data = JSON.parse(event.data);
       console.log('[OAuth Success]', data);
       
-      // Показываем успех в модалке
+      
       setOAuthSuccess(true);
       
-      // Обновляем список провайдеров
+      
       loadProviders();
       
-      // Закрываем модалку через 2 секунды
+      
       setTimeout(() => {
         setShowOAuthModal(false);
         setOAuthSuccess(false);
@@ -84,7 +84,7 @@ export default function ProvidersPage() {
 
     eventSource.addEventListener('oauth_error', (event) => {
       const data = JSON.parse(event.data);
-      // Игнорируем отмену polling задач
+      
       if (data.error === '轮询任务已被取消') return;
       console.error('[OAuth Error]', data);
     });
@@ -99,7 +99,7 @@ export default function ProvidersPage() {
     const data = await res.json();
     setProviders(data);
 
-    // Calculate stats
+    
     const allProviders = Object.values(data).flat() as Provider[];
     setStats({
       total: allProviders.length,
@@ -145,7 +145,7 @@ export default function ProvidersPage() {
   const handleAddCustom = (providerId: string, providerName: string) => {
     setAddProviderType(providerId);
     
-    // Определяем поля для каждого типа провайдера
+    
     const fields: any = { customName: '' };
     
     if (providerId === 'openai-custom') {
@@ -229,7 +229,7 @@ export default function ProvidersPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="space-y-8">
-        {/* Header */}
+        {}
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <Icon icon="pixelarticons:users" width="24" style={{ color: '#de610d' }} />
@@ -238,7 +238,7 @@ export default function ProvidersPage() {
           <p className="text-black/70">Управление AI провайдерами и их аккаунтами</p>
         </div>
 
-        {/* Stats */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white rounded-2xl p-6">
             <div className="flex items-center gap-4">
@@ -260,7 +260,7 @@ export default function ProvidersPage() {
           </div>
         </div>
 
-        {/* Providers Grid */}
+        {}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {visibleProviders.map(config => {
             const accounts = providers[config.id] || [];
@@ -275,7 +275,7 @@ export default function ProvidersPage() {
                 key={config.id} 
                 className="bg-white rounded-2xl p-6 space-y-4"
               >
-                {/* Header */}
+                {}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Icon icon={config.icon} width="24" style={{ color: '#de610d' }} />
@@ -301,7 +301,7 @@ export default function ProvidersPage() {
                   </div>
                 </div>
 
-                {/* Stats */}
+                {}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-black/50">Всего аккаунтов</span>
@@ -321,7 +321,7 @@ export default function ProvidersPage() {
                   </div>
                 </div>
 
-                {/* Actions */}
+                {}
                 <div className="flex gap-2 pt-2">
                   {['gemini-cli-oauth', 'gemini-antigravity', 'openai-qwen-oauth', 'claude-kiro-oauth', 'openai-iflow', 'openai-codex-oauth'].includes(config.id) ? (
                     <>
@@ -372,7 +372,7 @@ export default function ProvidersPage() {
           })}
         </div>
 
-        {/* Tips */}
+        {}
         <div className="space-y-4">
           <h3 className="text-xl font-bold text-black flex items-center gap-2">
             <Icon icon="pixelarticons:info" width="24" style={{ color: '#de610d' }} />
@@ -411,7 +411,7 @@ export default function ProvidersPage() {
         </div>
       </div>
 
-      {/* OAuth Modal */}
+      {}
       {showOAuthModal && oauthData && (
         <div 
           className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center p-0 md:p-4"
@@ -421,7 +421,7 @@ export default function ProvidersPage() {
             className="bg-white w-full md:max-w-lg md:rounded-2xl rounded-t-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Success Overlay */}
+            {}
             {oauthSuccess && (
               <div className="absolute inset-0 bg-white z-10 flex items-center justify-center">
                 <div className="text-center space-y-4">
@@ -434,7 +434,7 @@ export default function ProvidersPage() {
               </div>
             )}
 
-            {/* Header */}
+            {}
             <div className="sticky top-0 bg-white border-b border-gray-200 p-4 md:p-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Icon icon="pixelarticons:key" width="24" style={{ color: '#de610d' }} />
@@ -451,9 +451,9 @@ export default function ProvidersPage() {
               </button>
             </div>
 
-            {/* Content */}
+            {}
             <div className="p-4 md:p-6 space-y-6">
-              {/* QR Code */}
+              {}
               <div className="flex flex-col items-center gap-3 p-6 bg-gray-50 rounded-xl">
                 <img 
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(oauthData.url)}`}
@@ -463,7 +463,7 @@ export default function ProvidersPage() {
                 <p className="text-sm text-black/70 text-center">Отсканируйте QR-код камерой телефона</p>
               </div>
 
-              {/* Instructions */}
+              {}
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 rounded-full bg-[#de610d] text-white flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
@@ -488,7 +488,7 @@ export default function ProvidersPage() {
                 </div>
               </div>
 
-              {/* Action Button */}
+              {}
               <a
                 href={oauthData.url}
                 target="_blank"
@@ -498,7 +498,7 @@ export default function ProvidersPage() {
                 Открыть ссылку авторизации
               </a>
 
-              {/* URL Display */}
+              {}
               <div className="space-y-2">
                 <label className="text-xs text-black/50">Ссылка для авторизации</label>
                 <div className="bg-gray-100 rounded-xl p-3 break-all">
@@ -506,7 +506,7 @@ export default function ProvidersPage() {
                 </div>
               </div>
 
-              {/* Manual Callback Input */}
+              {}
               <div className="space-y-2 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
                 <div className="flex items-start gap-2">
                   <Icon icon="pixelarticons:info" width="16" className="mt-0.5 flex-shrink-0" style={{ color: '#f59e0b' }} />
@@ -544,7 +544,7 @@ export default function ProvidersPage() {
         </div>
       )}
 
-      {/* Provider Details Modal */}
+      {}
       {showDetailsModal && selectedProvider && (
         <div 
           className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center p-0 md:p-4"
@@ -554,7 +554,7 @@ export default function ProvidersPage() {
             className="bg-white w-full md:max-w-3xl md:rounded-2xl rounded-t-3xl max-h-[85vh] md:max-h-[90vh] overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
+            {}
             <div className="bg-white border-b border-gray-200 p-4 md:p-6 flex items-center justify-between flex-shrink-0">
               <div className="flex-1">
                 <h3 className="font-bold text-lg md:text-xl text-black">{selectedProvider.providerType}</h3>
@@ -570,7 +570,7 @@ export default function ProvidersPage() {
               </button>
             </div>
 
-            {/* Accounts List */}
+            {}
             <div className="p-4 md:p-6 space-y-3 overflow-y-auto flex-1">
               {selectedProvider.providers.length === 0 ? (
                 <div className="text-center py-12 text-black/50">
@@ -580,7 +580,7 @@ export default function ProvidersPage() {
               ) : (
                 selectedProvider.providers.map((account: any, idx: number) => (
                   <div key={account.uuid || idx} className="bg-gray-50 rounded-xl p-3 md:p-4 space-y-3">
-                    {/* Account Header */}
+                    {}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Icon 
@@ -606,7 +606,7 @@ export default function ProvidersPage() {
                       </div>
                     </div>
 
-                    {/* Stats Grid */}
+                    {}
                     <div className="grid grid-cols-2 gap-2 text-[10px] md:text-xs">
                       <div className="flex justify-between">
                         <span className="text-black/50">Использований:</span>
@@ -640,7 +640,7 @@ export default function ProvidersPage() {
                       </div>
                     </div>
 
-                    {/* Error Message */}
+                    {}
                     {!account.isHealthy && account.lastErrorMessage && (
                       <div className="bg-red-50 border border-red-200 rounded-lg p-2 text-[10px] md:text-xs">
                         <div className="flex items-start gap-2">
@@ -653,7 +653,7 @@ export default function ProvidersPage() {
                       </div>
                     )}
 
-                    {/* Config Path */}
+                    {}
                     <div className="border-t border-gray-200 pt-2">
                       <div className="text-[9px] md:text-[10px] text-black/50">Путь к конфигурации:</div>
                       <div className="mt-1 font-mono text-black/70 text-[9px] md:text-[10px] break-all bg-white rounded px-2 py-1">
@@ -661,16 +661,16 @@ export default function ProvidersPage() {
                       </div>
                     </div>
 
-                    {/* UUID */}
+                    {}
                     {account.uuid && (
                       <div className="text-[9px] md:text-[10px] text-black/40 font-mono">
                         UUID: {account.uuid}
                       </div>
                     )}
 
-                    {/* Action Buttons */}
+                    {}
                     <div className="flex gap-2 pt-2 border-t border-gray-200">
-                      {/* Refresh Button */}
+                      {}
                       {confirmingAction?.uuid === account.uuid && confirmingAction?.action === 'refresh' ? (
                         <div className="flex-1 flex gap-2">
                           <button
@@ -726,7 +726,7 @@ export default function ProvidersPage() {
                         </button>
                       )}
 
-                      {/* Delete Button */}
+                      {}
                       {confirmingAction?.uuid === account.uuid && confirmingAction?.action === 'delete' ? (
                         <div className="flex-1 flex gap-2">
                           <button
@@ -790,7 +790,7 @@ export default function ProvidersPage() {
         </div>
       )}
 
-      {/* Add Provider Modal */}
+      {}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -810,7 +810,7 @@ export default function ProvidersPage() {
             </div>
 
             <div className="p-6 space-y-4">
-              {/* Custom Name */}
+              {}
               <div>
                 <label className="block text-sm font-bold mb-2">Название (опционально)</label>
                 <input
@@ -822,7 +822,7 @@ export default function ProvidersPage() {
                 />
               </div>
 
-              {/* Dynamic Fields */}
+              {}
               {Object.keys(addFormData).filter(k => k !== 'customName').map(key => (
                 <div key={key}>
                   <label className="block text-sm font-bold mb-2">

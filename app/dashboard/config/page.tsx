@@ -67,7 +67,7 @@ export default function ConfigPage() {
         }),
       });
       if (res.ok) {
-        // Success feedback
+        
       }
     } catch (error) {
       console.error('Failed to save config:', error);
@@ -87,7 +87,7 @@ export default function ConfigPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="space-y-8">
-        {/* Header */}
+        {}
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <Icon icon="pixelarticons:sliders" width={24} style={{ color: '#de610d' }} />
@@ -99,7 +99,7 @@ export default function ConfigPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* API Key */}
+          {}
           <div className="bg-white rounded-xl p-6 space-y-4">
             <div className="flex items-center gap-2">
               <Icon icon="pixelarticons:coin" width={20} style={{ color: '#de610d' }} />
@@ -146,7 +146,7 @@ export default function ConfigPage() {
             </div>
           </div>
 
-          {/* Admin Password */}
+          {}
           <div className="bg-white rounded-xl p-6 space-y-4">
             <div className="flex items-center gap-2">
               <Icon icon="pixelarticons:lock" width={20} style={{ color: '#de610d' }} />
@@ -179,7 +179,7 @@ export default function ConfigPage() {
           </div>
         </div>
 
-        {/* Service Management */}
+        {}
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Icon icon="pixelarticons:sliders" width={20} style={{ color: '#de610d' }} />
@@ -190,7 +190,7 @@ export default function ConfigPage() {
           </p>
         </div>
 
-        {/* Mobile: Single Card */}
+        {}
         <div className="lg:hidden bg-white rounded-xl p-6 space-y-6">
           <div className="space-y-4">
             <h3 className="font-bold text-sm">Максимальное количество повторных попыток провайдера</h3>
@@ -242,9 +242,9 @@ export default function ConfigPage() {
           </div>
         </div>
 
-        {/* Desktop: Separate Cards */}
+        {}
         <div className="hidden lg:grid grid-cols-2 gap-6">
-          {/* Request Max Retries */}
+          {}
           <div className="bg-white rounded-xl p-6 space-y-4">
             <h3 className="font-bold text-sm">Максимальное количество повторных попыток провайдера</h3>
             <input
@@ -257,7 +257,7 @@ export default function ConfigPage() {
             />
           </div>
 
-          {/* Request Base Delay */}
+          {}
           <div className="bg-white rounded-xl p-6 space-y-4">
             <h3 className="font-bold text-sm">Базовая задержка повторной попытки (мс)</h3>
             <input
@@ -271,7 +271,7 @@ export default function ConfigPage() {
             />
           </div>
 
-          {/* Credential Switch Max Retries */}
+          {}
           <div className="bg-white rounded-xl p-6 space-y-4">
             <h3 className="font-bold text-sm">Максимальное количество попыток переключения учетных данных</h3>
             <input
@@ -284,7 +284,7 @@ export default function ConfigPage() {
             />
           </div>
 
-          {/* Max Error Count */}
+          {}
           <div className="bg-white rounded-xl p-6 space-y-4">
             <h3 className="font-bold text-sm">Максимальное количество ошибок провайдера</h3>
             <input
@@ -298,7 +298,7 @@ export default function ConfigPage() {
           </div>
         </div>
 
-        {/* System Prompt Section */}
+        {}
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
           <Icon icon="pixelarticons:message-text" width={24} style={{ color: '#de610d' }} />
           Системный промпт
@@ -308,7 +308,7 @@ export default function ConfigPage() {
         </p>
 
         <div className="grid grid-cols-1 gap-6 mb-8">
-          {/* System Prompt Content */}
+          {}
           <div className="bg-white rounded-xl p-6 space-y-4">
             <h3 className="font-bold text-sm">Содержимое системного промпта</h3>
             <textarea
@@ -320,7 +320,7 @@ export default function ConfigPage() {
             />
           </div>
 
-          {/* System Prompt Mode */}
+          {}
           <div className="bg-white rounded-xl p-6 space-y-4">
             <h3 className="font-bold text-sm">Режим применения</h3>
             <div className="flex gap-3">
@@ -353,7 +353,7 @@ export default function ConfigPage() {
           </div>
         </div>
 
-        {/* Save Button */}
+        {}
         <button
           onClick={handleSave}
           disabled={saving}

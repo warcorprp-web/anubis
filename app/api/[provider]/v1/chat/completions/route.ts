@@ -1,7 +1,4 @@
-/**
- * Provider-specific routing (ported from request-handler.js)
- * Handles: /{provider}/v1/chat/completions
- */
+
 
 import { NextRequest } from 'next/server';
 import { handleContentGenerationRequest } from '@/lib/backend/handlers/content-generation-handler';
@@ -11,10 +8,7 @@ import logger from '@/lib/backend/utils/logger';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-/**
- * POST /{provider}/v1/chat/completions
- * Provider-specific OpenAI endpoint
- */
+
 export async function POST(
     request: NextRequest,
     { params }: { params: Promise<{ provider: string }> }

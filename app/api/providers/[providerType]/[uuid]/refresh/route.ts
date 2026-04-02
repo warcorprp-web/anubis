@@ -1,6 +1,4 @@
-/**
- * POST /api/providers/[providerType]/[uuid]/refresh - Refresh provider token
- */
+
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getProviderPoolManager } from '@/lib/backend/services/provider-pool-manager';
@@ -17,7 +15,7 @@ export async function POST(
         
         logger.info(`[Provider Refresh] Refreshing token for ${providerType}/${uuid}`);
         
-        // Загружаем пулы
+        
         const pools = await loadProviderPools();
         
         if (!pools[providerType]) {
@@ -27,7 +25,7 @@ export async function POST(
             );
         }
         
-        // Находим провайдера
+        
         const provider = pools[providerType].find((p: any) => p.uuid === uuid);
         
         if (!provider) {
@@ -37,20 +35,20 @@ export async function POST(
             );
         }
         
-        // Создаем конфиг для адаптера
+        
         const config = {
             ...provider,
             MODEL_PROVIDER: providerType
         };
         
-        // Получаем адаптер и обновляем токен
+        
         const adapter = getServiceAdapter(config);
         
         if (typeof adapter.forceRefreshToken === 'function') {
             await adapter.forceRefreshToken();
             logger.info(`[Provider Refresh] Successfully refreshed token for ${providerType}/${uuid}`);
             
-            // Mark provider healthy and reset error count
+            
             const poolManager = await getProviderPoolManager();
             await poolManager.markProviderHealthy(providerType, uuid, false, null);
             

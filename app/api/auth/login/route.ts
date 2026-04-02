@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const adminPassword = loadAdminPassword();
 
     if (password === adminPassword) {
-      // Generate JWT token
+      
       const token = jwt.sign(
         { authenticated: true },
         JWT_SECRET,

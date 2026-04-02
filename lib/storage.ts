@@ -7,12 +7,12 @@ const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
 const PROVIDERS_FILE = path.join(DATA_DIR, 'provider_pools.json');
 const PWD_FILE = path.join(DATA_DIR, 'pwd');
 
-// Ensure data directory exists
+
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-// Default config
+
 const DEFAULT_CONFIG: AppConfig = {
   REQUIRED_API_KEY: '123456',
   SERVER_PORT: 5083,
@@ -50,7 +50,7 @@ const DEFAULT_CONFIG: AppConfig = {
   TLS_SIDECAR_PROXY_URL: null,
 };
 
-// Load config
+
 export function loadConfig(): AppConfig {
   try {
     if (fs.existsSync(CONFIG_FILE)) {
@@ -63,12 +63,12 @@ export function loadConfig(): AppConfig {
   return DEFAULT_CONFIG;
 }
 
-// Save config
+
 export function saveConfig(config: AppConfig): void {
   fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
 }
 
-// Load provider pools
+
 export function loadProviderPools(): ProviderPools {
   try {
     if (fs.existsSync(PROVIDERS_FILE)) {
@@ -81,12 +81,12 @@ export function loadProviderPools(): ProviderPools {
   return {};
 }
 
-// Save provider pools
+
 export function saveProviderPools(pools: ProviderPools): void {
   fs.writeFileSync(PROVIDERS_FILE, JSON.stringify(pools, null, 2));
 }
 
-// Load admin password
+
 export function loadAdminPassword(): string {
   try {
     if (fs.existsSync(PWD_FILE)) {
@@ -98,7 +98,7 @@ export function loadAdminPassword(): string {
   return '123456';
 }
 
-// Save admin password
+
 export function saveAdminPassword(password: string): void {
   fs.writeFileSync(PWD_FILE, password);
 }

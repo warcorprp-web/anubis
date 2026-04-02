@@ -1,7 +1,4 @@
-/**
- * GET /v1beta/models - Gemini model list endpoint
- * Ported from aiclient-2-api
- */
+
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getProviderPoolManager } from '@/lib/backend/services/provider-pool-manager';

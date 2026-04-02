@@ -110,7 +110,7 @@ export default function DashboardPage() {
   const [routingExamples, setRoutingExamples] = useState<RoutingExample[]>([]);
 
   useEffect(() => {
-    // Load providers stats
+    
     fetch('/api/providers')
       .then(res => res.json())
       .then(data => {
@@ -121,7 +121,7 @@ export default function DashboardPage() {
         });
       });
 
-    // Load system info
+    
     const loadSystemInfo = () => {
       fetch('/api/system')
         .then(res => res.json())
@@ -131,7 +131,7 @@ export default function DashboardPage() {
     loadSystemInfo();
     const interval = setInterval(loadSystemInfo, 5000);
 
-    // Load routing examples
+    
     fetch('/api/routing-examples')
       .then(res => res.json())
       .then(data => setRoutingExamples(data));
@@ -142,7 +142,7 @@ export default function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="space-y-8">
-        {/* Hero Section */}
+        {}
         <div className="space-y-6">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
@@ -165,7 +165,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Donation Banner */}
+        {}
         <div className="bg-white rounded-2xl p-4 lg:p-6">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div className="space-y-1">
@@ -176,7 +176,7 @@ export default function DashboardPage() {
               <p className="text-sm text-black/70">Ваша поддержка помогает развивать проект и добавлять новые функции</p>
             </div>
             <div className="flex items-center gap-3 lg:gap-4">
-              {/* QR для ПК */}
+              {}
               <div className="hidden lg:flex flex-col items-center gap-1">
                 <img 
                   src="https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=https://pay.cloudtips.ru/p/555c83ec&bgcolor=ffffff&color=de610d" 
@@ -185,7 +185,7 @@ export default function DashboardPage() {
                 />
                 <span className="text-xs text-black/50">Сканируйте</span>
               </div>
-              {/* Кнопка */}
+              {}
               <a 
                 href="https://pay.cloudtips.ru/p/555c83ec" 
                 target="_blank" 
@@ -199,7 +199,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* System Info */}
+        {}
         <div className="space-y-4">
           <h3 className="text-xl font-bold text-black flex items-center gap-2">
             <Icon icon="pixelarticons:device-desktop" width="24" />
@@ -237,7 +237,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Routing Examples */}
+        {}
         <div className="space-y-4">
           <h3 className="text-2xl font-bold text-black flex items-center gap-2">
             <Icon icon="pixelarticons:route" width="24" style={{ color: '#de610d' }} />
@@ -259,7 +259,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Tips */}
+        {}
         <div className="space-y-6">
           <h3 className="text-2xl font-bold text-black flex items-center gap-2">
             <Icon icon="pixelarticons:lightbulb" width="24" style={{ color: '#de610d' }} />
@@ -290,7 +290,7 @@ export default function DashboardPage() {
           </ul>
         </div>
 
-        {/* Footer */}
+        {}
         <div className="bg-white rounded-2xl p-8 text-center space-y-3">
           <p className="text-gray-600 flex items-center justify-center gap-2">
             Создано силами 
