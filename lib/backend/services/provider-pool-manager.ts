@@ -30,7 +30,7 @@ export class ProviderPoolManager {
         'forward-api': 'gpt-4o-mini',
     };
 
-    private providerPools: Record<string, ProviderConfig[]>;
+    public providerPools: Record<string, ProviderConfig[]>;
     private globalConfig: any;
     private providerStatus: Record<string, ProviderStatus[]>;
     private roundRobinIndex: Record<string, number>;

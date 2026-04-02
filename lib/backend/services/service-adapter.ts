@@ -58,6 +58,7 @@ export async function autoLinkProviderConfigs(config?: any, options: any = {}) {
       
       const { getProviderPoolManager } = await import('./provider-pool-manager');
       const poolManager = await getProviderPoolManager();
+      poolManager.providerPools = pools;
       await poolManager.initializeProviderStatus();
       console.log('[AutoLink] Provider status reinitialized');
     }
