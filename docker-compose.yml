@@ -7,6 +7,11 @@ services:
     restart: unless-stopped
     ports:
       - "${PORT:-5000}:5000"
+      - "1455:1455"    # Codex OAuth
+      - "8085:8085"    # Gemini CLI OAuth
+      - "8086:8086"    # Gemini Antigravity OAuth
+      - "8087:8087"    # iFlow OAuth
+      - "19876-19880:19876-19880"  # Kiro OAuth (range)
     environment:
       - NODE_ENV=production
       - PORT=5000
