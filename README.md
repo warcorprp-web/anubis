@@ -6,6 +6,14 @@
   **Универсальный self-hosted прокси для доступа к различным AI провайдерам**
   
   [Установка](#установка) • [Использование](#использование) • [Документация](#документация)
+  
+  <br>
+  
+  <a href="https://pay.cloudtips.ru/p/555c83ec">
+    <img src="https://img.shields.io/badge/💰_Поддержать_проект-FF6B35?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTUuMDkgOC4yNkwyMiA5LjI3TDE3IDEzLjE0TDE4LjE4IDIyTDEyIDE4LjI3TDUuODIgMjJMNyAxMy4xNEwyIDkuMjdMOC45MSA4LjI2TDEyIDJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=" alt="Поддержать проект">
+  </a>
+  
+  **ANUBIS бесплатен и всегда будет бесплатным. Ваша поддержка помогает развитию проекта.**
 </div>
 
 ---
