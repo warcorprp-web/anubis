@@ -69,12 +69,22 @@ docker-compose build 2>&1 | grep -v "Turbopack build encountered" | grep -v "Enc
 echo "[START] Запуск контейнера..."
 docker-compose up -d
 
+# Получаем внешний IP
+echo ""
+echo "[INFO] Определяем внешний IP адрес..."
+EXTERNAL_IP=$(curl -s --max-time 3 ifconfig.me 2>/dev/null || echo "")
+
 echo ""
 echo "========================================"
 echo "  ANUBIS AI Proxy запущен!"
 echo "========================================"
 echo ""
-echo "  Веб-интерфейс: http://localhost:$PORT"
+echo "  Веб-интерфейс:"
+echo "    Локальный:  http://localhost:$PORT"
+if [ -n "$EXTERNAL_IP" ]; then
+    echo "    Внешний:    http://$EXTERNAL_IP:$PORT"
+fi
+echo ""
 echo "  API ключ по умолчанию: 123456"
 echo "  Пароль по умолчанию: 123456"
 echo "  (Измените в панели Настройки)"
