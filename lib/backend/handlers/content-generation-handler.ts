@@ -8,6 +8,9 @@ import { getProtocolPrefix, ENDPOINT_TYPE, MODEL_PROTOCOL_PREFIX } from '@/lib/b
 import logger from '@/lib/backend/utils/logger';
 import { loadConfig } from '@/lib/storage';
 
+// @ts-ignore
+const { _applySystemPromptFromFile } = require('@/lib/backend/utils/common.js');
+
 interface RetryContext {
     CONFIG: any;
     currentRetry: number;
@@ -98,6 +101,9 @@ export async function handleContentGenerationRequest(
         } else {
             logger.info(`[Request Convert] No conversion needed`);
         }
+
+        // Apply system prompt from file if configured
+        processedRequestBody = await _applySystemPromptFromFile(globalConfig, processedRequestBody, toProvider);
 
         
         const retryContext: RetryContext = {
