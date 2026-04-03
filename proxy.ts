@@ -3,8 +3,6 @@ import type { NextRequest } from 'next/server';
 import { isAuthorized } from '@/lib/backend/auth/api-key-auth';
 import { loadConfig } from '@/lib/storage';
 
-export const runtime = 'nodejs';
-
 const REGISTERED_PROVIDERS = [
   'claude-kiro-oauth',
   'gemini-cli-oauth',
@@ -20,7 +18,7 @@ const REGISTERED_PROVIDERS = [
   'auto'
 ];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const config = loadConfig();
   const REQUIRED_API_KEY = config.REQUIRED_API_KEY || '123456';
