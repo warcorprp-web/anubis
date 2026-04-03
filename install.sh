@@ -31,13 +31,7 @@ fi
 if [ ! -f .env ]; then
     echo "[INFO] Creating .env file..."
     cp .env.example .env
-    
-    # Генерация случайного API ключа
-    API_KEY="anubis-$(openssl rand -hex 24)"
-    sed -i "s/your-secret-key-here/$API_KEY/" .env
-    
     echo "[OK] .env file created"
-    echo "[KEY] Your API key: $API_KEY"
     echo ""
 fi
 
@@ -66,6 +60,7 @@ echo "  ANUBIS AI Proxy запущен!"
 echo "========================================"
 echo ""
 echo "  Веб-интерфейс: http://localhost:5000"
+echo "  API ключ по умолчанию: 123456"
 echo "  Пароль по умолчанию: 123456"
 echo "  (Измените в панели Настройки)"
 echo ""
