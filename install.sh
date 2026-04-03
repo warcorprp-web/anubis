@@ -1,9 +1,14 @@
 #!/bin/bash
 set -e
 
+# Параметры
+PORT=${1:-5000}
+
 echo "========================================"
 echo "  ANUBIS AI Proxy - Установка"
 echo "========================================"
+echo ""
+echo "[INFO] Порт: $PORT"
 echo ""
 
 # Проверка и установка Docker
@@ -31,7 +36,17 @@ fi
 if [ ! -f .env ]; then
     echo "[INFO] Creating .env file..."
     cp .env.example .env
-    echo "[OK] .env file created"
+    sed -i "s/PORT=5000/PORT=$PORT/" .env
+    echo "[OK] .env file created with PORT=$PORT"
+    echo ""
+else
+    echo "[INFO] .env file exists, updating PORT..."
+    if grep -q "^PORT=" .env; then
+        sed -i "s/^PORT=.*/PORT=$PORT/" .env
+    else
+        echo "PORT=$PORT" >> .env
+    fi
+    echo "[OK] PORT updated to $PORT"
     echo ""
 fi
 
@@ -59,7 +74,7 @@ echo "========================================"
 echo "  ANUBIS AI Proxy запущен!"
 echo "========================================"
 echo ""
-echo "  Веб-интерфейс: http://localhost:5000"
+echo "  Веб-интерфейс: http://localhost:$PORT"
 echo "  API ключ по умолчанию: 123456"
 echo "  Пароль по умолчанию: 123456"
 echo "  (Измените в панели Настройки)"
@@ -69,3 +84,6 @@ echo "  docker-compose logs -f    # Просмотр логов"
 echo "  docker-compose stop       # Остановка"
 echo "  docker-compose restart    # Перезапуск"
 echo "  docker-compose down       # Удаление контейнера"
+echo ""
+echo "Для изменения порта:"
+echo "  ./install.sh <PORT>       # Например: ./install.sh 8080"
