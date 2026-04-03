@@ -12,6 +12,7 @@ const SUPPORTED_PROVIDERS = [
   'openaiResponses-custom',
   'forward-api',
   'grok-custom',
+  'gigachat-api',
 ];
 
 export async function GET(request: NextRequest) {

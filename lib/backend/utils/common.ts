@@ -18,6 +18,7 @@ export const MODEL_PROTOCOL_PREFIX = {
     GEMINI: 'gemini',
     FORWARD: 'forward',
     GROK: 'grok',
+    GIGACHAT: 'gigachat',
 };
 
 

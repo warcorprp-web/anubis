@@ -160,7 +160,7 @@ export default function DashboardPage() {
           <p className="text-lg lg:text-xl text-black/70 max-w-2xl leading-relaxed">
             Централизованное управление AI провайдерами.
             <span className="block mt-2 text-black/50 text-base">
-              Gemini • Claude • OpenAI • Qwen • Codex
+              Claude • Qwen • ГигаЧат • OpenAI
             </span>
           </p>
         </div>

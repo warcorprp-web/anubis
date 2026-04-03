@@ -51,6 +51,18 @@ export const PROVIDER_MODELS: Record<string, string[]> = {
         'grok-3-mini',
         'grok-4',
         'grok-4-mini',
+    ],
+    'gigachat-api': [
+        'GigaChat',
+        'GigaChat-2',
+        'GigaChat-2-Max',
+        'GigaChat-2-Pro',
+        'GigaChat-Max',
+        'GigaChat-Max-preview',
+        'GigaChat-Plus',
+        'GigaChat-Pro',
+        'GigaChat-Pro-preview',
+        'GigaChat-preview',
     ]
 };
 

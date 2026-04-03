@@ -16,6 +16,7 @@ export class OpenAIConverter extends BaseConverter {
             case MODEL_PROTOCOL_PREFIX.GEMINI:
                 return this.toGeminiRequest(data);
             case MODEL_PROTOCOL_PREFIX.OPENAI:
+            case MODEL_PROTOCOL_PREFIX.GIGACHAT:
                 return data; 
             default:
                 logger.warn(`[OpenAI Converter] Unsupported target: ${targetProtocol}`);
@@ -35,6 +36,8 @@ export class OpenAIConverter extends BaseConverter {
                 return this.toOpenAIResponsesResponse(data, model);
             case MODEL_PROTOCOL_PREFIX.GROK:
                 return this.toGrokResponse(data, model);
+            case MODEL_PROTOCOL_PREFIX.GIGACHAT:
+                return data;
             default:
                 logger.warn(`[OpenAI Converter] Unsupported target: ${targetProtocol}`);
                 return data;
@@ -65,22 +68,50 @@ export class OpenAIConverter extends BaseConverter {
     private toClaudeResponse(openaiResponse: any, model?: string): any {
         logger.info(`[OpenAI Converter] Converting OpenAI response to Claude format`);
         
-        
-        const content = openaiResponse.choices?.[0]?.message?.content || '';
+        const message = openaiResponse.choices?.[0]?.message;
+        const content: any[] = [];
 
-        
+        // Add text content if present
+        if (message?.content) {
+            content.push({
+                type: 'text',
+                text: message.content
+            });
+        }
+
+        // Convert tool_calls to Claude tool_use format (new format)
+        if (message?.tool_calls && Array.isArray(message.tool_calls)) {
+            for (const toolCall of message.tool_calls) {
+                content.push({
+                    type: 'tool_use',
+                    id: toolCall.id,
+                    name: toolCall.function?.name,
+                    input: typeof toolCall.function?.arguments === 'string' 
+                        ? JSON.parse(toolCall.function.arguments)
+                        : toolCall.function?.arguments
+                });
+            }
+        }
+
+        // Convert function_call to Claude tool_use format (old format, used by GigaChat)
+        if (message?.function_call) {
+            content.push({
+                type: 'tool_use',
+                id: `call_${Date.now()}`,
+                name: message.function_call.name,
+                input: typeof message.function_call.arguments === 'string'
+                    ? JSON.parse(message.function_call.arguments)
+                    : message.function_call.arguments
+            });
+        }
+
         return {
             id: openaiResponse.id || `msg_${Date.now()}`,
             type: 'message',
             role: 'assistant',
-            content: [
-                {
-                    type: 'text',
-                    text: content
-                }
-            ],
+            content,
             model: model || openaiResponse.model || 'claude',
-            stop_reason: this.mapFinishReasonToClaude(openaiResponse.choices?.[0]?.finish_reason),
+            stop_reason: (message?.tool_calls || message?.function_call) ? 'tool_use' : this.mapFinishReasonToClaude(openaiResponse.choices?.[0]?.finish_reason),
             stop_sequence: null,
             usage: {
                 input_tokens: openaiResponse.usage?.prompt_tokens || 0,

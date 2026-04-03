@@ -25,6 +25,7 @@ const providerConfigs: ProviderConfig[] = [
   { id: 'claude-kiro-oauth', name: 'Claude Kiro OAuth', icon: 'simple-icons:anthropic' },
   { id: 'openai-qwen-oauth', name: 'Qwen OAuth', icon: 'hugeicons:qwen' },
   { id: 'gemini-cli-oauth', name: 'Gemini CLI OAuth', icon: 'simple-icons:googlegemini' },
+  { id: 'gigachat-api', name: 'Сбер ГигаЧат', icon: 'cryptocurrency:sberbank' },
   { id: 'openai-custom', name: 'OpenAI Custom', icon: 'simple-icons:openai' },
   { id: 'claude-custom', name: 'Claude Custom', icon: 'simple-icons:anthropic' },
   { id: 'openai-codex-oauth', name: 'OpenAI Codex OAuth', icon: 'simple-icons:openai' },
@@ -146,24 +147,31 @@ export default function ProvidersPage() {
     setAddProviderType(providerId);
     
     
-    const fields: any = { customName: '' };
+    const fields: any = {};
     
     if (providerId === 'openai-custom') {
+      fields.customName = '';
       fields.OPENAI_API_KEY = '';
       fields.OPENAI_BASE_URL = 'https://api.openai.com';
     } else if (providerId === 'claude-custom') {
+      fields.customName = '';
       fields.CLAUDE_API_KEY = '';
       fields.CLAUDE_BASE_URL = 'https://api.anthropic.com';
     } else if (providerId === 'forward-api') {
+      fields.customName = '';
       fields.FORWARD_API_KEY = '';
       fields.FORWARD_BASE_URL = '';
       fields.FORWARD_HEADER_NAME = 'Authorization';
       fields.FORWARD_HEADER_VALUE_PREFIX = 'Bearer ';
     } else if (providerId === 'grok-custom') {
+      fields.customName = '';
       fields.GROK_COOKIE_TOKEN = '';
       fields.GROK_CF_CLEARANCE = '';
       fields.GROK_USER_AGENT = '';
       fields.GROK_BASE_URL = 'https://api.x.ai';
+    } else if (providerId === 'gigachat-api') {
+      fields.authorizationKey = '';
+      fields.scope = 'GIGACHAT_API_PERS';
     }
     
     setAddFormData(fields);
@@ -811,16 +819,18 @@ export default function ProvidersPage() {
 
             <div className="p-6 space-y-4">
               {}
-              <div>
-                <label className="block text-sm font-bold mb-2">Название (опционально)</label>
-                <input
-                  type="text"
-                  value={addFormData.customName || ''}
-                  onChange={(e) => setAddFormData({ ...addFormData, customName: e.target.value })}
-                  placeholder="Мой провайдер"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#de610d] focus:outline-none transition-colors"
-                />
-              </div>
+              {addFormData.hasOwnProperty('customName') && (
+                <div>
+                  <label className="block text-sm font-bold mb-2">Название (опционально)</label>
+                  <input
+                    type="text"
+                    value={addFormData.customName || ''}
+                    onChange={(e) => setAddFormData({ ...addFormData, customName: e.target.value })}
+                    placeholder="Мой провайдер"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#de610d] focus:outline-none transition-colors"
+                  />
+                </div>
+              )}
 
               {}
               {Object.keys(addFormData).filter(k => k !== 'customName').map(key => (
@@ -828,13 +838,25 @@ export default function ProvidersPage() {
                   <label className="block text-sm font-bold mb-2">
                     {key.replace(/_/g, ' ')}
                   </label>
-                  <input
-                    type={key.includes('KEY') || key.includes('TOKEN') ? 'password' : 'text'}
-                    value={addFormData[key] || ''}
-                    onChange={(e) => setAddFormData({ ...addFormData, [key]: e.target.value })}
-                    placeholder={addFormData[key] || ''}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#de610d] focus:outline-none transition-colors"
-                  />
+                  {key === 'scope' && addProviderType === 'gigachat-api' ? (
+                    <select
+                      value={addFormData[key] || 'GIGACHAT_API_PERS'}
+                      onChange={(e) => setAddFormData({ ...addFormData, [key]: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#de610d] focus:outline-none transition-colors"
+                    >
+                      <option value="GIGACHAT_API_PERS">GIGACHAT_API_PERS (Персональный)</option>
+                      <option value="GIGACHAT_API_B2B">GIGACHAT_API_B2B (Бизнес)</option>
+                      <option value="GIGACHAT_API_CORP">GIGACHAT_API_CORP (Корпоративный)</option>
+                    </select>
+                  ) : (
+                    <input
+                      type={key.includes('KEY') || key.includes('TOKEN') || key.includes('Secret') ? 'password' : 'text'}
+                      value={addFormData[key] || ''}
+                      onChange={(e) => setAddFormData({ ...addFormData, [key]: e.target.value })}
+                      placeholder={addFormData[key] || ''}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#de610d] focus:outline-none transition-colors"
+                    />
+                  )}
                 </div>
               ))}
             </div>

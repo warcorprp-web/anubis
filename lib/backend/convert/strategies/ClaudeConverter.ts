@@ -118,6 +118,18 @@ export class ClaudeConverter extends BaseConverter {
             openaiRequest.stream = claudeRequest.stream;
         }
 
+        // Convert Claude tools to OpenAI tools
+        if (claudeRequest.tools && Array.isArray(claudeRequest.tools)) {
+            openaiRequest.tools = claudeRequest.tools.map((tool: any) => ({
+                type: 'function',
+                function: {
+                    name: tool.name,
+                    description: tool.description,
+                    parameters: tool.input_schema
+                }
+            }));
+        }
+
         return openaiRequest;
     }
 

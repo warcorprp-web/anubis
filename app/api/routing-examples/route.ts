@@ -29,6 +29,19 @@ export async function GET() {
       defaultModel: 'qwen3-coder-plus'
     },
     {
+      provider: 'gigachat-api',
+      name: 'Сбер ГигаЧат',
+      paths: {
+        openai: '/gigachat-api/v1/chat/completions',
+        claude: '/gigachat-api/v1/messages'
+      },
+      description: 'Российский AI от Сбера',
+      badge: 'OAuth',
+      badgeClass: 'oauth',
+      icon: 'cryptocurrency:sberbank',
+      defaultModel: 'GigaChat'
+    },
+    {
       provider: 'gemini-cli-oauth',
       name: 'Gemini CLI OAuth',
       paths: {

@@ -681,7 +681,21 @@ export class ProviderPoolManager {
 
     
     getProviderTypes(): string[] {
-        return Object.keys(this.providerPools);
+        const types = Object.keys(this.providerPools);
+        
+        // Sort: providers with specific models first, then universal providers
+        const { getProviderModels } = require('../providers/provider-models');
+        return types.sort((a, b) => {
+            const aModels = getProviderModels(a);
+            const bModels = getProviderModels(b);
+            
+            // Providers with models go first
+            if (aModels.length > 0 && bModels.length === 0) return -1;
+            if (aModels.length === 0 && bModels.length > 0) return 1;
+            
+            // Otherwise keep original order
+            return 0;
+        });
     }
 }
 
