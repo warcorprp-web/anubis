@@ -34,6 +34,8 @@ export async function GET(request: NextRequest) {
     maxErrorCount: config.MAX_ERROR_COUNT,
     systemPromptContent: config.SYSTEM_PROMPT_CONTENT,
     systemPromptMode: config.SYSTEM_PROMPT_MODE,
+    proxyUrl: config.PROXY_URL,
+    proxyEnabledProviders: config.PROXY_ENABLED_PROVIDERS,
   });
 }
 
@@ -51,7 +53,9 @@ export async function POST(request: NextRequest) {
       credentialSwitchMaxRetries,
       maxErrorCount,
       systemPromptContent,
-      systemPromptMode
+      systemPromptMode,
+      proxyUrl,
+      proxyEnabledProviders
     } = await request.json();
     
     const config = loadConfig();
@@ -62,11 +66,23 @@ export async function POST(request: NextRequest) {
     config.MAX_ERROR_COUNT = maxErrorCount;
     config.SYSTEM_PROMPT_CONTENT = systemPromptContent;
     config.SYSTEM_PROMPT_MODE = systemPromptMode;
+    config.PROXY_URL = proxyUrl || null;
+    config.PROXY_ENABLED_PROVIDERS = proxyEnabledProviders || [];
     saveConfig(config);
     
     saveAdminPassword(adminPassword);
     
+    // Update ProviderPoolManager globalConfig in memory
+    try {
+      const { getProviderPoolManager } = await import('@/lib/backend/services/provider-pool-manager');
+      const poolManager = await getProviderPoolManager();
+      poolManager['globalConfig'] = config;
+      console.log('[Config] ProviderPoolManager globalConfig updated with new proxy settings');
+    } catch (error: any) {
+      console.warn('[Config] Could not update ProviderPoolManager:', error.message);
+    }
     
+    // Update process.env for immediate effect
     process.env.REQUIRED_API_KEY = apiKey;
     
     return NextResponse.json({ success: true });

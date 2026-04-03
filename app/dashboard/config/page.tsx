@@ -12,10 +12,32 @@ export default function ConfigPage() {
   const [maxErrorCount, setMaxErrorCount] = useState(10);
   const [systemPromptContent, setSystemPromptContent] = useState('');
   const [systemPromptMode, setSystemPromptMode] = useState<'append' | 'overwrite'>('append');
+  const [proxyUrl, setProxyUrl] = useState('');
+  const [proxyEnabledProviders, setProxyEnabledProviders] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const availableProviders = [
+    { id: 'claude-kiro-oauth', name: 'Claude (Kiro OAuth)', icon: 'simple-icons:anthropic' },
+    { id: 'openai-qwen-oauth', name: 'Qwen (OAuth)', icon: 'hugeicons:qwen' },
+    { id: 'gemini-cli-oauth', name: 'Gemini (CLI OAuth)', icon: 'simple-icons:googlegemini' },
+    { id: 'gemini-antigravity', name: 'Gemini (Antigravity)', icon: 'simple-icons:googlegemini' },
+    { id: 'gigachat-api', name: 'GigaChat', icon: 'cryptocurrency:sberbank' },
+    { id: 'openai-custom', name: 'OpenAI Custom', icon: 'simple-icons:openai' },
+    { id: 'claude-custom', name: 'Claude Custom', icon: 'simple-icons:anthropic' },
+    { id: 'grok-custom', name: 'Grok', icon: 'simple-icons:x' },
+    { id: 'forward-api', name: 'Forward API', icon: 'simple-icons:fastapi' },
+  ];
+
+  const toggleProvider = (providerId: string) => {
+    setProxyEnabledProviders(prev => 
+      prev.includes(providerId) 
+        ? prev.filter(id => id !== providerId)
+        : [...prev, providerId]
+    );
+  };
 
   const generateApiKey = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -47,6 +69,8 @@ export default function ConfigPage() {
       setMaxErrorCount(data.maxErrorCount || 10);
       setSystemPromptContent(data.systemPromptContent || '');
       setSystemPromptMode(data.systemPromptMode || 'append');
+      setProxyUrl(data.proxyUrl || '');
+      setProxyEnabledProviders(data.proxyEnabledProviders || []);
     } catch (error) {
       console.error('Failed to load config:', error);
     } finally {
@@ -72,7 +96,9 @@ export default function ConfigPage() {
           credentialSwitchMaxRetries,
           maxErrorCount,
           systemPromptContent,
-          systemPromptMode
+          systemPromptMode,
+          proxyUrl,
+          proxyEnabledProviders
         }),
       });
       if (res.ok) {
@@ -188,7 +214,58 @@ export default function ConfigPage() {
           </div>
         </div>
 
-        {}
+        {/* Прокси настройки - на всю ширину */}
+        <div className="bg-white rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <Icon icon="pixelarticons:network" width={20} style={{ color: '#de610d' }} />
+            <h2 className="font-bold">SOCKS5 / HTTP Прокси</h2>
+          </div>
+          <p className="text-black/50 text-sm">
+            Настройка прокси для провайдеров (поддержка SOCKS5, HTTP, HTTPS)
+          </p>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2">Адрес прокси</label>
+              <input
+                type="text"
+                value={proxyUrl}
+                onChange={(e) => setProxyUrl(e.target.value)}
+                placeholder="socks5://127.0.0.1:1080 или http://127.0.0.1:7890"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#de610d] focus:outline-none transition-colors"
+              />
+              <p className="text-xs text-black/40 mt-1">
+                Оставьте пустым чтобы отключить прокси
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-3">Провайдеры через прокси</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                {availableProviders.map(provider => (
+                  <label
+                    key={provider.id}
+                    className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-xl hover:border-[#de610d] cursor-pointer transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={proxyEnabledProviders.includes(provider.id)}
+                      onChange={() => toggleProvider(provider.id)}
+                      className="w-4 h-4 accent-[#de610d]"
+                    />
+                    <Icon icon={provider.icon} width={20} style={{ color: '#de610d' }} />
+                    <span className="text-sm">{provider.name}</span>
+                  </label>
+                ))}
+              </div>
+              <p className="text-xs text-black/40 mt-2">
+                Выбранные провайдеры будут использовать прокси для всех запросов
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Настройки повторных попыток */}
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Icon icon="pixelarticons:sliders" width={20} style={{ color: '#de610d' }} />
