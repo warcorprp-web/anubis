@@ -110,8 +110,13 @@ export default function DashboardPage() {
   const [routingExamples, setRoutingExamples] = useState<RoutingExample[]>([]);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     
-    fetch('/api/providers')
+    fetch('/api/providers', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => res.json())
       .then(data => {
         const providers = Object.values(data).flat() as any[];

@@ -1,7 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadConfig, saveConfig, loadAdminPassword, saveAdminPassword } from '@/lib/storage';
+import jwt from 'jsonwebtoken';
 
-export async function GET() {
+const JWT_SECRET = process.env.JWT_SECRET || 'anubis-secret-key';
+
+function verifyToken(request: NextRequest): boolean {
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader?.startsWith('Bearer ')) return false;
+  
+  const token = authHeader.substring(7);
+  try {
+    jwt.verify(token, JWT_SECRET);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function GET(request: NextRequest) {
+  if (!verifyToken(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  
   const config = loadConfig();
   const adminPassword = loadAdminPassword();
   
@@ -18,6 +38,10 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  if (!verifyToken(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  
   try {
     const { 
       apiKey, 

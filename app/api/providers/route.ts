@@ -1,7 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadProviderPools, saveProviderPools } from '@/lib/storage';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'anubis-secret-key';
+
+function verifyToken(request: NextRequest): boolean {
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader?.startsWith('Bearer ')) return false;
+  
+  const token = authHeader.substring(7);
+  try {
+    jwt.verify(token, JWT_SECRET);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export async function GET(request: NextRequest) {
+  if (!verifyToken(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  
   try {
     const pools = loadProviderPools();
     return NextResponse.json(pools);
@@ -14,6 +34,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!verifyToken(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  
   try {
     const body = await request.json();
     const pools = loadProviderPools();

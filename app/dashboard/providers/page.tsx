@@ -96,7 +96,12 @@ export default function ProvidersPage() {
   }, []);
 
   const loadProviders = async () => {
-    const res = await fetch('/api/providers');
+    const token = localStorage.getItem('token');
+    const res = await fetch('/api/providers', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     const data = await res.json();
     setProviders(data);
 

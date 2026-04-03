@@ -32,7 +32,12 @@ export default function ConfigPage() {
 
   const loadConfig = async () => {
     try {
-      const res = await fetch('/api/config');
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/config', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setApiKey(data.apiKey || '');
       setAdminPassword(data.adminPassword || '');
@@ -52,9 +57,13 @@ export default function ConfigPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch('/api/config', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ 
           apiKey, 
           adminPassword,
