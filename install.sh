@@ -46,6 +46,13 @@ mkdir -p data configs
 chown -R 1001:1001 data configs
 chmod -R 755 data configs
 
+# Создание дефолтного system prompt если не существует
+if [ ! -f data/input_system_prompt.txt ]; then
+    echo "[INFO] Creating default system prompt..."
+    cp data/input_system_prompt.txt.example data/input_system_prompt.txt
+    echo "[OK] System prompt created"
+fi
+
 # Сборка и запуск
 echo "[BUILD] Сборка Docker образа..."
 docker-compose build
