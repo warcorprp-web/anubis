@@ -49,7 +49,7 @@ fi
 
 # Сборка и запуск
 echo "[BUILD] Сборка Docker образа..."
-docker-compose build
+docker-compose build 2>&1 | grep -v "Turbopack build encountered" | grep -v "Encountered unexpected file in NFT list" | grep -v "Import trace:" | grep -v "Output asset trace:" | grep -v "filesystem operations" | grep -v "turbopackIgnore" | grep -v "very dynamic requires" || true
 
 echo "[START] Запуск контейнера..."
 docker-compose up -d
