@@ -72,6 +72,10 @@ export async function POST(request: NextRequest) {
     
     saveAdminPassword(adminPassword);
     
+    // Update global proxy config cache for hot reload
+    const { setGlobalProxyConfig } = await import('@/lib/backend/utils/proxy-utils');
+    setGlobalProxyConfig(config);
+    
     // Update ProviderPoolManager globalConfig in memory
     try {
       const { getProviderPoolManager } = await import('@/lib/backend/services/provider-pool-manager');
