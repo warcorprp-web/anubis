@@ -1,7 +1,7 @@
 # ANUBIS AI Proxy
 
 <div align="center">
-  <img src="public/favicon.svg" width="120" height="120" alt="ANUBIS Logo">
+  <img src="image.png" alt="ANUBIS Logo">
   
   **Self-hosted прокси для работы с разными AI провайдерами через один API**
   
