@@ -76,12 +76,16 @@ export async function POST(request: NextRequest) {
     const { setGlobalProxyConfig } = await import('@/lib/backend/utils/proxy-utils');
     setGlobalProxyConfig(config);
     
-    // Update ProviderPoolManager globalConfig in memory
+    // Update ProviderPoolManager globalConfig in memory and reinitialize providers
     try {
       const { getProviderPoolManager } = await import('@/lib/backend/services/provider-pool-manager');
       const poolManager = await getProviderPoolManager();
       poolManager['globalConfig'] = config;
-      console.log('[Config] ProviderPoolManager globalConfig updated with new proxy settings');
+      
+      // Reinitialize all provider instances to apply new proxy settings
+      await poolManager.reinitializeAllProviders();
+      
+      console.log('[Config] ProviderPoolManager globalConfig updated and providers reinitialized');
     } catch (error: any) {
       console.warn('[Config] Could not update ProviderPoolManager:', error.message);
     }

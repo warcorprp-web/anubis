@@ -679,6 +679,42 @@ export class ProviderPoolManager {
         }
     }
 
+    async reinitializeAllProviders(): Promise<void> {
+        logger.info('[ProviderPoolManager] Reinitializing all providers for proxy config update');
+        
+        for (const [providerType, pool] of Object.entries(this.providerPools)) {
+            for (const provider of pool) {
+                try {
+                    const tempConfig = {
+                        ...this.globalConfig,
+                        ...provider,
+                        MODEL_PROVIDER: providerType
+                    };
+                    
+                    const serviceAdapter = getServiceAdapter(tempConfig);
+                    if (serviceAdapter) {
+                        // Try reinitialize() first (for providers that cache axios instances)
+                        if (typeof serviceAdapter.reinitialize === 'function') {
+                            await serviceAdapter.reinitialize();
+                            logger.debug(`[ProviderPoolManager] Reinitialized ${providerType} (${provider.uuid})`);
+                        } else if (typeof serviceAdapter.initialize === 'function') {
+                            // Fallback to initialize() with flag reset
+                            if ('isInitialized' in serviceAdapter) {
+                                serviceAdapter.isInitialized = false;
+                            }
+                            await serviceAdapter.initialize();
+                            logger.debug(`[ProviderPoolManager] Initialized ${providerType} (${provider.uuid})`);
+                        }
+                    }
+                } catch (error: any) {
+                    logger.warn(`[ProviderPoolManager] Failed to reinitialize ${providerType} (${provider.uuid}): ${error.message}`);
+                }
+            }
+        }
+        
+        logger.info('[ProviderPoolManager] All providers reinitialized');
+    }
+
     
     getProviderTypes(): string[] {
         const types = Object.keys(this.providerPools);
