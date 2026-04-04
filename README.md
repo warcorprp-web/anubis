@@ -199,6 +199,38 @@ curl http://localhost:5000/v1/chat/completions \
 
 Это легальный способ использовать триал доступы в production. Просто добавляйте новые аккаунты по мере необходимости.
 
+### Пример: DeepSeek обход ограничений
+
+DeepSeek предоставляет бесплатный доступ через веб-интерфейс, но без официального API. ANUBIS решает эту проблему:
+
+**Как это работает:**
+1. Вы авторизуетесь на [chat.deepseek.com](https://chat.deepseek.com)
+2. Получаете токен из localStorage браузера
+3. Добавляете токен в ANUBIS через веб-интерфейс
+4. ANUBIS автоматически решает PoW (Proof-of-Work) челленджи
+5. Используете DeepSeek как обычный API
+
+```bash
+# Получение токена (в консоли браузера на chat.deepseek.com):
+JSON.parse(localStorage.getItem("userToken")).value
+
+# Использование через ANUBIS:
+curl http://localhost:5000/v1/chat/completions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "model": "deepseek-chat",
+    "messages": [{"role": "user", "content": "Explain quantum computing"}]
+  }'
+```
+
+**Особенности:**
+- Токен живёт несколько недель
+- Поддержка reasoning моделей (deepseek-reasoner, deepseek-r1)
+- Автоматическое решение PoW челленджей через WASM
+- Работает с OpenAI и Anthropic форматами
+
+Токены обновляются вручную, но это занимает 30 секунд раз в несколько недель.
+
 
 ---
 
