@@ -26,6 +26,7 @@ const providerConfigs: ProviderConfig[] = [
   { id: 'openai-qwen-oauth', name: 'Qwen OAuth', icon: 'hugeicons:qwen' },
   { id: 'gemini-cli-oauth', name: 'Gemini CLI OAuth', icon: 'simple-icons:googlegemini' },
   { id: 'gigachat-api', name: 'Сбер ГигаЧат', icon: 'cryptocurrency:sberbank' },
+  { id: 'deepseek', name: 'DeepSeek', icon: 'ri:deepseek-fill' },
   { id: 'openai-custom', name: 'OpenAI Custom', icon: 'simple-icons:openai' },
   { id: 'claude-custom', name: 'Claude Custom', icon: 'simple-icons:anthropic' },
   { id: 'openai-codex-oauth', name: 'OpenAI Codex OAuth', icon: 'simple-icons:openai' },
@@ -177,6 +178,8 @@ export default function ProvidersPage() {
     } else if (providerId === 'gigachat-api') {
       fields.authorizationKey = '';
       fields.scope = 'GIGACHAT_API_PERS';
+    } else if (providerId === 'deepseek') {
+      fields.DEEPSEEK_AUTH_TOKEN = '';
     }
     
     setAddFormData(fields);
@@ -823,6 +826,24 @@ export default function ProvidersPage() {
             </div>
 
             <div className="p-6 space-y-4">
+              {/* DeepSeek Instructions */}
+              {addProviderType === 'deepseek' && (
+                <div className="space-y-3">
+                  <p className="text-sm font-bold text-black">Как получить токен DeepSeek:</p>
+                  <ol className="text-sm text-black/70 space-y-2 list-decimal list-inside">
+                    <li>Откройте <a href="https://chat.deepseek.com" target="_blank" rel="noopener noreferrer" className="text-[#de610d] hover:underline font-bold">chat.deepseek.com</a> и войдите в аккаунт</li>
+                    <li>Откройте консоль браузера (F12 → Console)</li>
+                    <li>Вставьте команду и нажмите Enter:</li>
+                  </ol>
+                  <div className="bg-gray-900 rounded-xl p-3">
+                    <code className="text-sm text-white font-mono break-all">
+                      JSON.parse(localStorage.getItem("userToken")).value
+                    </code>
+                  </div>
+                  <p className="text-sm text-black/70">Скопируйте полученный токен и вставьте в поле ниже</p>
+                </div>
+              )}
+
               {}
               {addFormData.hasOwnProperty('customName') && (
                 <div>

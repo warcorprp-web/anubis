@@ -55,6 +55,14 @@ export async function POST(
             newProvider.GIGACHAT_CREDS_FILE_PATH = `configs/gigachat/${credsFileName}`;
             
             logger.info(`[Provider Add] Created GigaChat credentials file: ${credsFileName}`);
+        } else if (providerType === 'deepseek') {
+            // DeepSeek: store auth token directly
+            const { DEEPSEEK_AUTH_TOKEN } = body;
+            newProvider.DEEPSEEK_AUTH_TOKEN = DEEPSEEK_AUTH_TOKEN;
+            newProvider.checkModelName = 'deepseek-chat';
+            newProvider.checkHealth = true;
+            
+            logger.info(`[Provider Add] Added DeepSeek provider: ${newProvider.uuid}`);
         } else {
             // For other providers, store all body data
             Object.assign(newProvider, body);

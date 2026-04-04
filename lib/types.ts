@@ -9,7 +9,8 @@ export type ProviderType =
   | 'openai-iflow'
   | 'openai-codex-oauth'
   | 'openaiResponses-custom'
-  | 'forward-api';
+  | 'forward-api'
+  | 'deepseek';
 
 
 export interface ProviderConfig {
@@ -47,6 +48,7 @@ export interface ProviderConfig {
   CLAUDE_BASE_URL?: string;
   FORWARD_API_KEY?: string;
   FORWARD_BASE_URL?: string;
+  DEEPSEEK_AUTH_TOKEN?: string;
 }
 
 

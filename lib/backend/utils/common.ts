@@ -19,6 +19,7 @@ export const MODEL_PROTOCOL_PREFIX = {
     FORWARD: 'forward',
     GROK: 'grok',
     GIGACHAT: 'gigachat',
+    DEEPSEEK: 'deepseek',
 };
 
 

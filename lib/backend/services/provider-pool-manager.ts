@@ -102,6 +102,7 @@ export class ProviderPoolManager {
             }
         }
         this._log('info', `Initialized provider status for ${Object.keys(this.providerStatus).length} provider types.`);
+        this._log('info', `Provider types: ${JSON.stringify(Object.keys(this.providerStatus))}`);
     }
 
     
@@ -577,9 +578,11 @@ export class ProviderPoolManager {
         const allProviderTypes = Array.from(new Set([...registeredProviders]));
 
         for (const providerType of allProviderTypes) {
+            this._log('info', `[Models] Checking provider: ${providerType}, exists: ${!!this.providerStatus[providerType]}`);
             if (this.providerStatus[providerType]) {
                 const { getProviderModels } = await import('../providers/provider-models');
                 let models = getProviderModels(providerType);
+                this._log('info', `[Models] Provider ${providerType} has ${models.length} models`);
                 
                 
                 if (models.length === 0) {

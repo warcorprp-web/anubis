@@ -42,6 +42,19 @@ export async function GET() {
       defaultModel: 'GigaChat'
     },
     {
+      provider: 'deepseek',
+      name: 'DeepSeek',
+      paths: {
+        openai: '/deepseek/v1/chat/completions',
+        claude: '/deepseek/v1/messages'
+      },
+      description: 'DeepSeek AI с reasoning',
+      badge: 'Триал',
+      badgeClass: 'oauth',
+      icon: 'ri:deepseek-fill',
+      defaultModel: 'deepseek-chat'
+    },
+    {
       provider: 'gemini-cli-oauth',
       name: 'Gemini CLI OAuth',
       paths: {

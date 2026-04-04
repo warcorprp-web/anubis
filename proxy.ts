@@ -15,6 +15,7 @@ const REGISTERED_PROVIDERS = [
   'openai-iflow',
   'gemini-antigravity',
   'openaiResponses-custom',
+  'deepseek',
   'auto'
 ];
 

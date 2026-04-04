@@ -17,6 +17,7 @@ export class OpenAIConverter extends BaseConverter {
                 return this.toGeminiRequest(data);
             case MODEL_PROTOCOL_PREFIX.OPENAI:
             case MODEL_PROTOCOL_PREFIX.GIGACHAT:
+            case MODEL_PROTOCOL_PREFIX.DEEPSEEK:
                 return data; 
             default:
                 logger.warn(`[OpenAI Converter] Unsupported target: ${targetProtocol}`);
@@ -37,6 +38,7 @@ export class OpenAIConverter extends BaseConverter {
             case MODEL_PROTOCOL_PREFIX.GROK:
                 return this.toGrokResponse(data, model);
             case MODEL_PROTOCOL_PREFIX.GIGACHAT:
+            case MODEL_PROTOCOL_PREFIX.DEEPSEEK:
                 return data;
             default:
                 logger.warn(`[OpenAI Converter] Unsupported target: ${targetProtocol}`);

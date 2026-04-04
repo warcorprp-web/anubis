@@ -63,6 +63,12 @@ export const PROVIDER_MODELS: Record<string, string[]> = {
         'GigaChat-Pro',
         'GigaChat-Pro-preview',
         'GigaChat-preview',
+    ],
+    'deepseek': [
+        'deepseek-chat',
+        'deepseek-coder',
+        'deepseek-reasoner',
+        'deepseek-r1'
     ]
 };
 

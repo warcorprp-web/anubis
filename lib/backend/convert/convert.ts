@@ -19,6 +19,7 @@ class ConverterFactoryClass {
         this.registerConverter(MODEL_PROTOCOL_PREFIX.CLAUDE, ClaudeConverter);
         this.registerConverter(MODEL_PROTOCOL_PREFIX.GEMINI, GeminiConverter);
         this.registerConverter(MODEL_PROTOCOL_PREFIX.GIGACHAT, OpenAIConverter); // GigaChat uses OpenAI format
+        this.registerConverter(MODEL_PROTOCOL_PREFIX.DEEPSEEK, OpenAIConverter); // DeepSeek uses OpenAI format
         
     }
 

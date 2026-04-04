@@ -13,6 +13,7 @@ const SUPPORTED_PROVIDERS = [
   'forward-api',
   'grok-custom',
   'gigachat-api',
+  'deepseek',
 ];
 
 export async function GET(request: NextRequest) {
